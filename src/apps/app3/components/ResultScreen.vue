@@ -3,6 +3,7 @@
     <div class="result-screen">
       <h1>Ваше время реакции: {{ time }} мс</h1>
       <button @click="restart">Попробовать снова</button>
+      <button class="btn btn-primary" @click="goToNextTest">Далее</button>
     </div>
   </template>
 
@@ -17,6 +18,10 @@
     methods: {
       restart() {
         this.$emit('restart');
+      },
+      goToNextTest() {
+      // Переход на страницу следующего теста (app2)
+      this.$router.push('/app4');
       },
     },
   };

@@ -67,11 +67,33 @@ export default {
         this.circlePosition.y = newY;
       }, 20); // Обновление позиции каждые 20 мс
     },
-
+    saveTestResultToLocalStorage(testId, result) {
+      const key = `test_${testId}`;
+      localStorage.setItem(key, JSON.stringify(result));
+    },
     endGame() {
       clearInterval(this.interval);
       clearInterval(this.circleInterval);
-      alert(`Игра окончена! Ваш счёт: ${this.score}`);
+
+      // Формируем результат теста
+      const testResult = {
+        testId: 1,  // Идентификатор теста (замените на актуальный)
+        score: this.score,
+        timeLeft: this.timeLeft,
+        // Добавьте другие данные, которые нужно сохранить
+      };
+
+      // Сохраняем результат в localStorage
+      this.saveTestResultToLocalStorage(testResult.testId, testResult);
+
+      // Отображаем диалоговое окно с результатами
+      const userConfirmed = window.confirm(`Игра окончена! Ваш счёт: ${this.score}\nНажмите "ОК", чтобы перейти к результатам всех тестов.`);
+
+      if (userConfirmed) {
+        // Переход на страницу результатов
+        this.$router.push('/results');
+      }
+
       this.$emit("endGame");
     },
   },
@@ -107,6 +129,7 @@ export default {
   },
 };
 </script>
+
 <style>
 .game {
   position: relative;

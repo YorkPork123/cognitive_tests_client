@@ -4,6 +4,7 @@
       <h1>Игра окончена!</h1>
       <p>Ваш счёт: {{ score }}</p>
       <button @click="restartGame">Играть снова</button>
+      <button class="btn btn-primary" @click="goToNextTest">Далее</button>
     </div>
   </template>
 
@@ -19,6 +20,10 @@
     methods: {
       restartGame() {
         this.$emit("restart");
+      },
+      goToNextTest() {
+      // Переход на страницу следующего теста (app3)
+      this.$router.push('/app3');
       },
     },
   };
