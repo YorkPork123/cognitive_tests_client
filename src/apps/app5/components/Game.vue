@@ -33,6 +33,9 @@ export default {
       interval: null,
       circleInterval: null,
       hasClicked: false,
+      tryNumber: 1, // Номер попытки
+      totalAnswers: 0, // Общее количество ответов
+      correctAnswers: 0, // Количество правильных ответов
     };
   },
   methods: {
@@ -67,8 +70,8 @@ export default {
         this.circlePosition.y = newY;
       }, 20); // Обновление позиции каждые 20 мс
     },
-    saveTestResultToLocalStorage(testId, result) {
-      const key = `test_${testId}`;
+    saveTestResultToLocalStorage(result) {
+      const key = `test_result_${result.id}`; // Уникальный ключ для сохранения
       localStorage.setItem(key, JSON.stringify(result));
     },
     endGame() {
@@ -77,17 +80,23 @@ export default {
 
       // Формируем результат теста
       const testResult = {
-        testId: 1,  // Идентификатор теста (замените на актуальный)
-        score: this.score,
-        timeLeft: this.timeLeft,
-        // Добавьте другие данные, которые нужно сохранить
+        id: Date.now(), // Уникальный идентификатор (можно заменить на другой)
+        test: 5, // Идентификатор теста (замените на актуальный)
+        user: parseInt(localStorage.getItem('user_id')), // Идентификатор пользователя (замените на актуальный)
+        try_number: 1,
+        number_all_answers: 1,
+        number_correct_answers: 1,
+        complete_time: new Date(Date.now()).toISOString(), // Время завершения теста
+        accuracy: this.correctAnswers / this.totalAnswers || 0, // Точность
       };
 
       // Сохраняем результат в localStorage
-      this.saveTestResultToLocalStorage(testResult.testId, testResult);
+      this.saveTestResultToLocalStorage(testResult);
 
       // Отображаем диалоговое окно с результатами
-      const userConfirmed = window.confirm(`Игра окончена! Ваш счёт: ${this.score}\nНажмите "ОК", чтобы перейти к результатам всех тестов.`);
+      const userConfirmed = window.confirm(
+        `Игра окончена! Ваш счёт: ${this.score}\nНажмите "ОК", чтобы перейти к результатам всех тестов.`
+      );
 
       if (userConfirmed) {
         // Переход на страницу результатов
@@ -108,19 +117,18 @@ export default {
       const dx = event.offsetX - centerX;
       const dy = event.offsetY - centerY;
       const distance = Math.sqrt(dx * dx + dy * dy);
-        if (distance <= 50) {
-          const textMatchesColor = this.currentText === this.colors[this.colorValues.indexOf(this.currentColor)];
-          if (this.hasClicked === false) {
-            if (textMatchesColor) {
-            console.log("Right");
+      if (distance <= 50) {
+        const textMatchesColor = this.currentText === this.colors[this.colorValues.indexOf(this.currentColor)];
+        if (!this.hasClicked) {
+          this.totalAnswers++; // Увеличиваем общее количество ответов
+          if (textMatchesColor) {
+            this.correctAnswers++; // Увеличиваем количество правильных ответов
             this.score += 20; // Начисление очков за правильное действие
-          } else {
-            console.log("Not right");
-          }
           }
           this.hasClicked = true;
+        }
       }
-  });
+    });
   },
   beforeDestroy() {
     clearInterval(this.interval);

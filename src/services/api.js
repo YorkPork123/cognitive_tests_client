@@ -28,3 +28,14 @@ export const loginUser = async (userData) => {
         throw error;
     }
 };
+
+// Метод для отправки результатов теста на сервер
+export const sendTestResult = async (result) => {
+    try {
+        const response = await api.post('/api/save_test_result/', result);
+        return response.data;
+    } catch (error) {
+        console.error('Ошибка при отправке результата:', error);
+        throw error;
+    }
+};
