@@ -17,8 +17,17 @@
 </template>
 
 <script>
+import { sendTestResult } from '@/services/api'; // Импортируем метод для отправки данных
+
+
 export default {
   name: "Game",
+  props: {
+    isExamMode: {
+      type: Boolean,
+      required: true,
+    },
+  },
   data() {
     return {
       score: 0,
@@ -70,11 +79,16 @@ export default {
         this.circlePosition.y = newY;
       }, 20); // Обновление позиции каждые 20 мс
     },
-    saveTestResultToLocalStorage(result) {
-      const key = `test_result_${result.id}`; // Уникальный ключ для сохранения
+    saveTestResultToLocalStorage(testId, result) {
+      const key = `test_${testId}`;
       localStorage.setItem(key, JSON.stringify(result));
     },
-    endGame() {
+    isExamMode() {
+      if (parseInt(localStorage.getItem('isExameMode') == 1)) {
+        this.isExamMode = true
+      }
+    },
+    async endGame() {
       clearInterval(this.interval);
       clearInterval(this.circleInterval);
 
@@ -86,21 +100,27 @@ export default {
         try_number: 1,
         number_all_answers: 1,
         number_correct_answers: 1,
-        complete_time: new Date(Date.now()).toISOString(), // Время завершения теста
-        accuracy: this.correctAnswers / this.totalAnswers || 0, // Точность
+        complete_time: new Date().toISOString(), // Время завершения теста
+        accuracy: this.score, // Точность
       };
 
+
       // Сохраняем результат в localStorage
-      this.saveTestResultToLocalStorage(testResult);
+      this.saveTestResultToLocalStorage(testResult.test, testResult);
+      await sendTestResult(testResult)
+      this.isExamMode;
+
+      // Определяем следующий тест
+      const nextTestId = parseInt(localStorage.getItem('test_id')) + 1;
+      localStorage.setItem('test_id', nextTestId);
 
       // Отображаем диалоговое окно с результатами
       const userConfirmed = window.confirm(
-        `Игра окончена! Ваш счёт: ${this.score}\nНажмите "ОК", чтобы перейти к результатам всех тестов.`
+        `Игра окончена! Ваш счёт: ${this.score}\nНажмите "ОК", чтобы перейти к в меню.`
       );
 
       if (userConfirmed) {
-        // Переход на страницу результатов
-        this.$router.push('/results');
+          this.$router.push('/menu');
       }
 
       this.$emit("endGame");

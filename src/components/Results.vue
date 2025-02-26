@@ -3,13 +3,10 @@
     <h1>Результаты тестов</h1>
     <ul>
       <li v-for="(result, index) in results" :key="index">
-        Тест {{ result.test }}: {{ result.number_correct_answers }} из {{ result.number_all_answers }} ({{ result.accuracy }}%)
+        Тест {{ result.test }}: ({{ result.accuracy }})
       </li>
     </ul>
-    <button @click="sendResultsToServer">Отправить результаты на сервер</button>
-    <p v-if="loading">Отправка данных...</p>
-    <p v-if="error">{{ error }}</p>
-    <p v-if="success">Данные успешно отправлены!</p>
+    <button @click="goBackToMenu">Вернуться в меню</button>
   </div>
 </template>
 
@@ -44,6 +41,9 @@ export default {
     },
   },
   methods: {
+    goBackToMenu() {
+      this.$router.push('/menu');
+    },
     async sendResultsToServer() {
       this.loading = true;
       this.error = null;

@@ -4,11 +4,13 @@
     <p>Угаданные слова: {{ guessedWords.length }} / {{ wordsToFind.length }}</p>
     <p>Уровень внимания: <strong>{{ attentionLevel }}</strong></p>
     <button class="btn btn-primary" @click="$emit('restart-test')">Попробовать снова</button>
-    <button class="btn btn-primary" @click="goToNextTest">Далее</button>
+    <button class="btn btn-primary" @click="goToMenu">Вернуться в меню</button>
   </div>
 </template>
 
 <script>
+import { sendTestResult } from '@/services/api'; // Импортируем метод для отправки данных
+
 export default {
   props: {
     guessedWords: {
@@ -23,16 +25,8 @@ export default {
       type: Number,
       required: true,
     },
-    userId: {
-      type: Number,
-      required: true,
-    },
-    tryNumber: {
-      type: String,
-      required: true,
-    },
-    completeTime: {
-      type: String,
+    isExamMode: {
+      type: Boolean,
       required: true,
     },
   },
@@ -48,31 +42,69 @@ export default {
   },
   methods: {
     saveTestResultToLocalStorage(testId, result) {
-      // Формируем ключ для localStorage
       const key = `test_${testId}`;
-
-      // Сохраняем результат в localStorage
       localStorage.setItem(key, JSON.stringify(result));
     },
-    goToNextTest() {
-      // Формируем результат теста
+    // isExamMode() {
+    //   if (parseInt(localStorage.getItem('isExameMode') == 1)) {
+    //     this.isExamMode = true
+    //   }
+    // },
+    // goToNextTest() {
+    //   // Сохраняем результат текущего теста
+    //   const testResult = {
+    //     id: Date.now(),
+    //     test: parseInt(localStorage.getItem('test_id')),
+    //     user: parseInt(localStorage.getItem('user_id')),
+    //     try_number: 1,
+    //     number_all_answers: this.wordsToFind.length.toString(),
+    //     number_correct_answers: this.guessedWords.length.toString(),
+    //     complete_time: new Date().toISOString(),
+    //     accuracy: this.attentionLevel,
+    //   };
+    //   this.saveTestResultToLocalStorage(testResult.test, testResult);
+    //   // this.isExamMode
+
+    //   // Определяем следующий тест
+    //   const nextTestId = parseInt(localStorage.getItem('test_id')) + 1;
+    //   localStorage.setItem('test_id', nextTestId);
+    //   if (nextTestId <= 5) {
+    //     this.$router.push(`/app${nextTestId}`);
+    //   } else {
+    //     // Если тесты закончились, возвращаемся в меню
+    //     this.$router.push('/menu');
+    //   }
+    // },
+    async goToMenu() {
+      // Сохраняем результат текущего теста
       const testResult = {
-        id: Date.now(),  // Уникальный ID (можно заменить на другой способ генерации)
-        test: 1,  // Идентификатор теста
-        user: parseInt(localStorage.getItem('user_id')),  // Идентификатор пользователя
-        try_number: 1,  // Номер попытки
-        number_all_answers: this.wordsToFind.length.toString(),  // Общее количество ответов
-        number_correct_answers: this.guessedWords.length.toString(),  // Количество правильных ответов
-        complete_time: new Date(Date.now()).toISOString(),  // Время завершения теста
-        accuracy: this.attentionLevel,  // Точность
+        id: Date.now(),
+        test: parseInt(localStorage.getItem('test_id')),
+        user: parseInt(localStorage.getItem('user_id')),
+        try_number: 1,
+        number_all_answers: this.wordsToFind.length.toString(),
+        number_correct_answers: this.guessedWords.length.toString(),
+        complete_time: new Date().toISOString(),
+        accuracy: this.attentionLevel,
       };
-
-      // Сохраняем результат в localStorage
       this.saveTestResultToLocalStorage(testResult.test, testResult);
-
-      // Переход на страницу следующего теста (app2)
-      this.$router.push('/app2');
+      await sendTestResult(testResult)
+      this.$router.push('/menu');
     },
   },
 };
 </script>
+
+<style scoped>
+.text-center {
+  text-align: center;
+  padding: 20px;
+}
+
+.btn {
+  margin: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+</style>

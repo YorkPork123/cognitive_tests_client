@@ -7,9 +7,10 @@ import App5Wrapper from '@/apps/app5/Wrapper.vue';
 import Register from '@/components/Register.vue';
 import Login from '@/components/Login.vue';
 import Results from '@/components/Results.vue';
+import Menu from '@/components/Menu.vue'
 
 const routes = [
-  { path: '/', component: App1Wrapper, meta: { requiresAuth: true } },
+  { path: '/', component: Menu, meta: { requiresAuth: true } },
   { path: '/app1', component: App1Wrapper, meta: { requiresAuth: true } },
   { path: '/app2', component: App2Wrapper, meta: { requiresAuth: true } },
   { path: '/app3', component: App3Wrapper, meta: { requiresAuth: true } },
@@ -18,6 +19,7 @@ const routes = [
   { path: '/results', component: Results, meta: {requiresAuth: true}  },
   { path: '/register', component: Register },
   { path: '/login', component: Login },
+  { path: '/menu', component: Menu, meta: { requiresAuth: true } },
 ];
 
 const router = createRouter({
