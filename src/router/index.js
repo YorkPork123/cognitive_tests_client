@@ -14,6 +14,10 @@ import App12Wrapper from '@/apps/app12/Wrapper.vue';
 import App13Wrapper from '@/apps/app13/Wrapper.vue';
 import App14Wrapper from '@/apps/app14/Wrapper.vue';
 import App15Wrapper from '@/apps/app15/Wrapper.vue';
+import App16Wrapper from '@/apps/app16/Wrapper.vue';
+import App17Wrapper from '@/apps/app17/Wrapper.vue';
+import App18Wrapper from '@/apps/app18/Wrapper.vue';
+import App19Wrapper from '@/apps/app19/Wrapper.vue';
 import Register from '@/components/Register.vue';
 import Login from '@/components/Login.vue';
 import Results from '@/components/Results.vue';
@@ -36,6 +40,10 @@ const routes = [
   { path: '/app13', component: App13Wrapper, meta: { requiresAuth: true } },
   { path: '/app14', component: App14Wrapper, meta: { requiresAuth: true } },
   { path: '/app15', component: App15Wrapper, meta: { requiresAuth: true } },
+  { path: '/app16', component: App16Wrapper, meta: { requiresAuth: true } },
+  { path: '/app17', component: App17Wrapper, meta: { requiresAuth: true } },
+  { path: '/app18', component: App18Wrapper, meta: { requiresAuth: true } },
+  { path: '/app19', component: App19Wrapper, meta: { requiresAuth: true } },
   { path: '/results', component: Results, meta: {requiresAuth: true}  },
   { path: '/register', component: Register },
   { path: '/login', component: Login },
