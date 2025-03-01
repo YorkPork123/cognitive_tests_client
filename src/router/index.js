@@ -18,6 +18,8 @@ import App16Wrapper from '@/apps/app16/Wrapper.vue';
 import App17Wrapper from '@/apps/app17/Wrapper.vue';
 import App18Wrapper from '@/apps/app18/Wrapper.vue';
 import App19Wrapper from '@/apps/app19/Wrapper.vue';
+import App20Wrapper from '@/apps/app20/Wrapper.vue';
+import App21Wrapper from '@/apps/app21/Wrapper.vue';
 import Register from '@/components/Register.vue';
 import Login from '@/components/Login.vue';
 import Results from '@/components/Results.vue';
@@ -44,6 +46,8 @@ const routes = [
   { path: '/app17', component: App17Wrapper, meta: { requiresAuth: true } },
   { path: '/app18', component: App18Wrapper, meta: { requiresAuth: true } },
   { path: '/app19', component: App19Wrapper, meta: { requiresAuth: true } },
+  { path: '/app20', component: App20Wrapper, meta: { requiresAuth: true } },
+  { path: '/app21', component: App21Wrapper, meta: { requiresAuth: true } },
   { path: '/results', component: Results, meta: {requiresAuth: true}  },
   { path: '/register', component: Register },
   { path: '/login', component: Login },
