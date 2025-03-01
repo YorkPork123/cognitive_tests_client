@@ -91,11 +91,11 @@ export default {
         id: Date.now(), // Уникальный ID
         test: parseInt(localStorage.getItem("test_id")), // Идентификатор теста
         user: parseInt(localStorage.getItem("user_id")), // Идентификатор пользователя
-        try_number: this.tryNumber, // Номер попытки
+        try_number: 1, // Номер попытки
         number_all_answers: "1", // Общее количество ответов (для теста на возраст мозга это 1)
         number_correct_answers: "1", // Количество правильных ответов (для теста на возраст мозга это 1)
-        complete_time: this.completeTime, // Время завершения теста
-        accuracy: this.accuracy, // Точность
+        complete_time: new Date().toISOString(), // Время завершения теста
+        accuracy: this.score, // Точность
       };
       this.saveTestResultToLocalStorage(testResult.test, testResult);
       await sendTestResult(testResult)

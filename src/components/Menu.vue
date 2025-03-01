@@ -31,6 +31,11 @@ export default {
         { id: 3, title: 'Тест 3', url: '/app3' },
         { id: 4, title: 'Тест 4', url: '/app4' },
         { id: 5, title: 'Тест 5', url: '/app5' },
+        { id: 6, title: 'Тест 6', url: '/app6' },
+        { id: 7, title: 'Тест 7', url: '/app7' },
+        { id: 8, title: 'Тест 8', url: '/app8' },
+        { id: 9, title: 'Тест 9', url: '/app9' },
+        { id: 10, title: 'Тест 10', url: '/app10' },
       ],
     };
   },
