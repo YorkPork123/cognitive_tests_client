@@ -75,16 +75,22 @@ export default {
 }
 
 .test-list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 10px;
   margin-top: 20px;
+  max-width: 1400px; /* Ограничиваем максимальную ширину для удобства */
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .test-button {
   padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
+  white-space: nowrap; /* Запрещаем перенос текста на новую строку */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Добавляем многоточие, если текст не помещается */
 }
 
 .exam-mode {
