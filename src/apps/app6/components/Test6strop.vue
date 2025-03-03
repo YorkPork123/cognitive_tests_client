@@ -219,7 +219,7 @@ input[type='checkbox'] {
 
 @media (max-width: 600px) {
   #app {
-    padding: 2px;
+  
     width: 80%;
     height: 70%;
   }
