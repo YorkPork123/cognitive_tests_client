@@ -237,7 +237,7 @@
       gap: 5px;
     }
     #app {
-      padding: 2px;
+    
       width: 80%;
       height: 70%;
     }
