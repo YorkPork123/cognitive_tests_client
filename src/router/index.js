@@ -26,7 +26,7 @@ import Results from '@/components/Results.vue';
 import Menu from '@/components/Menu.vue'
 
 const routes = [
-  { path: '/', component: Menu, meta: { requiresAuth: true } },
+  { path: '/', component: Register },
   { path: '/app1', component: App1Wrapper, meta: { requiresAuth: true } },
   { path: '/app2', component: App2Wrapper, meta: { requiresAuth: true } },
   { path: '/app3', component: App3Wrapper, meta: { requiresAuth: true } },
