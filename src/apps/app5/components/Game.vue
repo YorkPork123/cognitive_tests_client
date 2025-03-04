@@ -72,8 +72,8 @@ export default {
         let newY = this.circlePosition.y + this.circleSpeed.y;
 
         // Проверка на столкновение с краями игрового поля
-        if (newX < 0 || newX > 350) this.circleSpeed.x *= -1;
-        if (newY < 0 || newY > 350) this.circleSpeed.y *= -1;
+        if (newX < 0 || newX > 250) this.circleSpeed.x *= -1;
+        if (newY < 0 || newY > 250) this.circleSpeed.y *= -1;
 
         this.circlePosition.x = newX;
         this.circlePosition.y = newY;
@@ -177,8 +177,8 @@ export default {
 }
 .game-field {
   position: relative;
-  width: 400px;
-  height: 400px;
+  width: 300px;
+  height: 300px;
   margin: 0 auto;
   background-color: #eef;
   border: 1px solid #ccc;

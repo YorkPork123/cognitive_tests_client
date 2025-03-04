@@ -347,7 +347,8 @@
     flex-direction: column;
     align-items: center;
     background-color: #fffff0;
-    height: 100vh;
+    height: 80vh;
+    margin-top: 1.2rem;
   }
 
   .score, .time, .question{
@@ -374,6 +375,7 @@
     justify-content: center;
     align-items: center;
     margin-top: 3.5vh;
+    padding: 10px;
   }
 
   .plane-up {

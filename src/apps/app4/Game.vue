@@ -70,8 +70,8 @@
       let number, position, circle;
       do {
         number = Math.floor(Math.random() * (999 - 1) + 1);
-        const left = Math.random() * (400 - 50); // 400 - ширина игрового поля, 50 - диаметр круга
-        const top = Math.random() * (400 - 50);
+        const left = Math.random() * (300 - 50); // 400 - ширина игрового поля, 50 - диаметр круга
+        const top = Math.random() * (300 - 50);
         position = { top: `${top}px`, left: `${left}px` };
         circle = { number, style: position, x: left + 25, y: top + 25 }; // x и y - координаты центра кружочка
       } while (checkCollision(circle, grid));
@@ -124,13 +124,14 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    max-width: 300px;
   }
   .start-screen {
     text-align: center;
   }
   .game-board {
     position: relative;
-    width: 400px;
+    width: 300px;
     height: 400px;
     background: #e0e7ff;
     border-radius: 15px;

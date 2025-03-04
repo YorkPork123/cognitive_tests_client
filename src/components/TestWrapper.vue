@@ -1,7 +1,6 @@
 <template>
     <div>
       <h1>{{ currentTest.title }}</h1>
-      <!-- Ваш код для отображения теста -->
       <button @click="completeTest">Завершить тест</button>
     </div>
   </template>
@@ -33,12 +32,12 @@
         // Сохраняем результаты текущего теста
         const result = {
           test: this.currentTest.id,
-          user: this.$store.state.user.id,  // Предположим, что ID пользователя хранится в Vuex
-          try_number: '1',  // Пример данных
-          number_all_answers: '10',  // Пример данных
-          number_correct_answers: '8',  // Пример данных
-          complete_time: '00:05:00',  // Пример данных
-          accuracy: '80.0',  // Пример данных
+          user: this.$store.state.user.id,  
+          try_number: '1',  
+          number_all_answers: '10',  
+          number_correct_answers: '8',  
+          complete_time: '00:05:00',  
+          accuracy: '80.0',  
         };
 
         try {
@@ -65,5 +64,5 @@
   </script>
 
   <style scoped>
-  /* Стили для компонента */
+
   </style>

@@ -69,5 +69,5 @@ export default {
 </script>
 
 <style scoped>
-/* Стили для компонента */
+
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="cont">
       <h1>Тест на нахождение неправильной последовательности</h1>
       <div v-if="!started">
         <button class="purple-button" @click="startTest">Начать тест</button>
@@ -171,49 +171,88 @@
   };
   </script>
 
-  <style scoped>
+<style scoped>
+.sequences-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sequence-item {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  padding: 10px;
+  color: black;
+  min-width: 150px;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.sequence-item.correct {
+  background-color: lightgreen;
+  font-weight: bold;
+}
+
+.sequence-item.selected {
+  background-color: #e0e0e0;
+}
+
+.correct {
+  font-weight: bold;
+  color: green;
+}
+
+.purple-button {
+  background-color: purple;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.cont {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.purple-button:hover {
+  background-color: darkpurple;
+}
+
+/* Медиа-правило для мобильных устройств */
+@media (max-width: 600px) {
   .sequences-container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    gap: 5px; 
   }
 
   .sequence-item {
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    padding: 10px;
-    color: black;
-    min-width: 150px;
-    text-align: center;
-    cursor: pointer;
-    user-select: none;
-  }
-
-  .sequence-item.correct {
-    background-color: lightgreen;
-    font-weight: bold;
-  }
-
-  .sequence-item.selected {
-    background-color: #e0e0e0;
-  }
-
-  .correct {
-    font-weight: bold;
-    color: green;
+    padding: 8px; 
+    min-width: 120px; 
+    font-size: 14px; 
   }
 
   .purple-button {
-    background-color: purple;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
+    padding: 8px 16px; 
+    font-size: 14px; 
   }
 
-  .purple-button:hover {
-    background-color: darkpurple;
+  h1 {
+    font-size: 20px;
+    margin: 10px 0;
+    max-width: 300px;
   }
-  </style>
+
+  p {
+    font-size: 14px;
+    margin: 5px 0;
+  }
+
+  .correct {
+    font-size: 14px;
+    font-weight: normal;
+  }
+}
+</style>

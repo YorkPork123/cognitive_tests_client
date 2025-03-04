@@ -2,12 +2,7 @@
   <div class="menu">
     <h1>Выберите тест</h1>
     <div class="test-list">
-      <button
-        v-for="test in tests"
-        :key="test.id"
-        @click="goToTest(test.id)"
-        class="test-button"
-      >
+      <button v-for="test in tests" :key="test.id" @click="goToTest(test.id)" class="test-button">
         {{ test.title }}
       </button>
     </div>
@@ -70,30 +65,95 @@ export default {
 
 <style scoped>
 .menu {
-  text-align: center;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
   padding: 20px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #2c3e50;
 }
 
 .test-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 10px;
-  margin-top: 20px;
-  max-width: 1400px; /* Ограничиваем максимальную ширину для удобства */
-  margin-left: auto;
-  margin-right: auto;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 15px;
+  max-width: 1200px;
+  width: 100%;
+  overflow-y: auto;
+  padding: 0 10px;
+  box-sizing: border-box;
 }
 
 .test-button {
-  padding: 10px 20px;
-  font-size: 16px;
+  margin: 0;
+  width: 100%;
+  padding: 20px 20px;
+  font-size: 1rem;
   cursor: pointer;
-  white-space: nowrap; /* Запрещаем перенос текста на новую строку */
+  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis; /* Добавляем многоточие, если текст не помещается */
+  text-overflow: ellipsis;
+  border: none;
+  border-radius: 8px;
+  background-color: #5560c2;
+  color: white;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: normal;
+  word-wrap: break-word;
 }
 
-.exam-mode {
-  margin-top: 20px;
+.test-button:hover {
+  background-color: #220783;
+  transform: translateY(-2px);
+}
+
+.test-button:active {
+  transform: translateY(0);
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .test-list {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    padding: 0 5px;
+    max-height: calc(100vh - 150px);
+  }
+
+  .test-button {
+    padding: 20px 15px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.2rem;
+  }
+
+  .test-list {
+    grid-template-columns: 1fr;
+  }
+
+  .test-button {
+    font-size: 0.8rem;
+  }
 }
 </style>

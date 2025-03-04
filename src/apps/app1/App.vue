@@ -2,65 +2,56 @@
   <div id="app">
     <div class="container mt-5">
       <StartScreen v-if="screen === 'start'" @start-test="startTest" />
-      <TestScreen
-        v-if="screen === 'test'"
-        :letter-grid="letterGrid"
-        :time-left="timeLeft"
-        @finish-test="finishTest"
-        @update-input="updateInput"
-      />
-      <ResultScreen
-        v-if="screen === 'result'"
-        :guessed-words="guessedWords"
-        :words-to-find="wordsToFind"
-        @restart-test="restartTest"
-      />
+      <TestScreen v-if="screen === 'test'" :letter-grid="letterGrid" :time-left="timeLeft" @finish-test="finishTest"
+        @update-input="updateInput" />
+      <ResultScreen v-if="screen === 'result'" :guessed-words="guessedWords" :words-to-find="wordsToFind"
+        @restart-test="restartTest" />
     </div>
-    </div>
-  </template>
+  </div>
+</template>
 
-  <script>
-  import StartScreen from './components/StartScreen.vue';
-  import TestScreen from './components/TestScreen.vue';
-  import ResultScreen from './components/ResultScreen.vue';
+<script>
+import StartScreen from './components/StartScreen.vue';
+import TestScreen from './components/TestScreen.vue';
+import ResultScreen from './components/ResultScreen.vue';
 
-  export default {
-    components: { StartScreen, TestScreen, ResultScreen },
-    data() {
-      return {
-        screen: 'start',
-        letterGrid: '',
-        wordsToFind: [
-          'мир', 'солнце', 'луна', 'вода', 'лес', 'река', 'город', 'день',
-          'ночь', 'зима', 'лето', 'осень', 'весна', 'книга', 'дом', 'кот',
-          'пёс', 'птица', 'цветок', 'зверь', 'трава', 'земля', 'камень',
-          'дорога', 'звезда', 'дерево', 'облако', 'море', 'гора', 'ветер',
-        ], // Слова для поиска
-        userInput: '', // Ввод пользователя
-        guessedWords: [], // Угаданные слова
-        timeLeft: 120, // Таймер в секундах
-        timer: null // Ссылка на таймер
-      };
+export default {
+  components: { StartScreen, TestScreen, ResultScreen },
+  data() {
+    return {
+      screen: 'start',
+      letterGrid: '',
+      wordsToFind: [
+        'мир', 'солнце', 'луна', 'вода', 'лес', 'река', 'город', 'день',
+        'ночь', 'зима', 'лето', 'осень', 'весна', 'книга', 'дом', 'кот',
+        'пёс', 'птица', 'цветок', 'зверь', 'трава', 'земля', 'камень',
+        'дорога', 'звезда', 'дерево', 'облако', 'море', 'гора', 'ветер',
+      ], // Слова для поиска
+      userInput: '', // Ввод пользователя
+      guessedWords: [], // Угаданные слова
+      timeLeft: 120, // Таймер в секундах
+      timer: null // Ссылка на таймер
+    };
+  },
+  methods: {
+    startTest() {
+      this.screen = 'test';
+      this.generateLetterGrid();
+      this.startTimer();
     },
-    methods: {
-      startTest() {
-        this.screen = 'test';
-        this.generateLetterGrid();
-        this.startTimer();
-      },
-      finishTest() {
-        clearInterval(this.timer);
-        this.evaluateResults();
-        this.screen = 'result';
-      },
-      restartTest() {
-        this.screen = 'start';
-        this.userInput = '';
-        this.guessedWords = [];
-        this.timeLeft = 120;
-        clearInterval(this.timer);
-      },
-      generateLetterGrid() {
+    finishTest() {
+      clearInterval(this.timer);
+      this.evaluateResults();
+      this.screen = 'result';
+    },
+    restartTest() {
+      this.screen = 'start';
+      this.userInput = '';
+      this.guessedWords = [];
+      this.timeLeft = 120;
+      clearInterval(this.timer);
+    },
+    generateLetterGrid() {
       const gridSize = 1000; // Общее количество символов
       const rowLength = 50; // Количество символов в строке для переноса
       const letters = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'; // Русский алфавит
@@ -105,24 +96,35 @@
         .match(new RegExp(`.{1,${rowLength}}`, 'g'))
         .join('\n');
     },
-      startTimer() {
-        this.timer = setInterval(() => {
-          this.timeLeft--;
-          if (this.timeLeft <= 0) {
-            this.finishTest();
-          }
-        }, 1000);
-      },
-      evaluateResults() {
-        const userWords = this.userInput
-          .toLowerCase()
-          .split(',')
-          .map(word => word.trim());
-        this.guessedWords = this.wordsToFind.filter(word => userWords.includes(word));
-      },
-      updateInput(input) {
-        this.userInput = input;
-      }
+    startTimer() {
+      this.timer = setInterval(() => {
+        this.timeLeft--;
+        if (this.timeLeft <= 0) {
+          this.finishTest();
+        }
+      }, 1000);
+    },
+    evaluateResults() {
+      const userWords = this.userInput
+        .toLowerCase()
+        .split(',')
+        .map(word => word.trim());
+      this.guessedWords = this.wordsToFind.filter(word => userWords.includes(word));
+    },
+    updateInput(input) {
+      this.userInput = input;
     }
-  };
-  </script>
+  }
+};
+</script>
+
+<style scoped>
+#app {
+  font-family: "Arial", sans-serif;
+  text-align: center;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+</style>
