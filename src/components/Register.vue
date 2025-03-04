@@ -1,6 +1,7 @@
 <template>
   <div class="register-container">
     <h2 class="auth-title">Регистрация</h2>
+    <button class="submit-button" @click="goToLoginScreen">Войти</button>
     <div class="form-wrapper">
       <form @submit.prevent="submitForm" class="register-form">
         <!-- Основные поля -->
@@ -127,6 +128,9 @@ export default {
       } catch (error) {
         this.error = error.response?.data?.error || 'Ошибка при регистрации';
       }
+    },
+    goToLoginScreen() {
+      this.$router.push('/login'); // Перенаправление на страницу входа
     },
   },
 };
