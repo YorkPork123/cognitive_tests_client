@@ -1,30 +1,30 @@
 <template>
-    <div>
-      <h1>Тест Струпа на оттенки</h1>
-      <div v-if="isTimerActive">
-        <h2>Оставшееся время: {{ remainingTime }} секунд</h2>
-      </div>
-      <h3>Правильные ответы: {{ right }} : {{ wrong }} Неправильные ответы</h3>
-      <br />
-      <h1>Найдите куб такого же цвета в массиве</h1>
-      <div class="color-test">
-        <div class="color-container">
-          <div class="target-color" :style="{ backgroundColor: targetColor }"></div>
-        </div>
-        <h1>Массив:</h1>
-        <div class="options">
-          <div
-            v-for="(color, index) in options"
-            :key="index"
-            class="color-option"
-            :style="{ backgroundColor: color }"
-            @click="checkAnswer(color)"
-          ></div>
-        </div>
-        <h2 v-if="resultMessage">{{ resultMessage }}</h2>
-      </div>
+  <div class="container">
+    <h1>Тест Струпа на оттенки</h1>
+    <div v-if="isTimerActive">
+      <h2>Оставшееся время: {{ remainingTime }} секунд</h2>
     </div>
-  </template>
+    <h3>Правильные ответы: {{ right }}</h3>
+    <h3>Неправильные ответы: {{ wrong }}</h3>
+    <h1>Найдите куб такого же цвета в массиве</h1>
+    <div class="color-test">
+      <div class="color-container">
+        <div class="target-color" :style="{ backgroundColor: targetColor }"></div>
+      </div>
+      <h1>Массив:</h1>
+      <div class="options-row">
+        <div
+          v-for="(color, index) in options"
+          :key="index"
+          class="color-option"
+          :style="{ backgroundColor: color }"
+          @click="checkAnswer(color)"
+        ></div>
+      </div>
+      <h2 v-if="resultMessage">{{ resultMessage }}</h2>
+    </div>
+  </div>
+</template>
 
   <script>
   import { sendTestResult } from '@/services/api'; // Импортируем метод для отправки данных
@@ -140,65 +140,97 @@
   };
   </script>
 
-  <style scoped>
-  .fixerr {
-    position: fixed;
-    top: 20%;
-    left: 0;
-    right: 0;
-    padding: 10px 0;
-    z-index: 1000;
+<style scoped>
+.container {
+  margin: 0 auto;
+  padding: 10px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+h3 {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.color-test {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.color-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.target-color {
+  width: 100px;
+  height: 100px;
+  border: 2px solid #000;
+}
+
+.options-row {
+  display: flex;
+  flex-wrap: wrap; /* Позволяет элементам переноситься на новую строку */
+  justify-content: center;
+  gap: 5px; 
+  padding: 10px;
+  width: 100%; 
+}
+
+.color-option {
+  width: 50px; 
+  height: 50px; 
+  cursor: pointer;
+  border: 1px solid #000;
+}
+
+/* Адаптация для мобильных устройств */
+@media (max-width: 600px) {
+  .container {
+    padding: 10px;
   }
+
+  h1 {
+    font-size: 20px;
+  }
+
+  h2 {
+    font-size: 16px;
+  }
+
+  h3 {
+    font-size: 14px;
+  }
+
   .target-color {
-    width: 150px;
-    height: 150px;
-    margin: 20px;
-    border: 2px solid #000;
+    width: 100px;
+    height: 100px;
   }
-  .options {
-    display: flex;
-    flex-wrap: wrap;
+
+  .options-row {
+    flex-direction: column; /* Элементы в столбик на мобильных */
+    align-items: center; /* Центрируем элементы */
+    gap: 5px; /* Уменьшаем отступы */
   }
+
   .color-option {
     width: 80px;
     height: 80px;
-    margin: 5px;
-    cursor: pointer;
-    border: 1px solid #000;
   }
-  .color-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 20px 0;
-  }
-
-  @media (max-width: 600px) {
-    .target-color {
-      width: 70px;
-      height: 70px;
-      margin: 10px;
-    }
-    .color-option {
-      width: 30px;
-      height: 30px;
-      margin: 5px;
-    }
-    .color-container {
-      margin: 3px 0;
-    }
-    #app {
-      width: 80%;
-      height: 70%;
-    }
-    h1 {
-      font-size: 18px;
-    }
-    h2 {
-      font-size: 16px;
-    }
-    h3 {
-      font-size: 10px;
-    }
-  }
-  </style>
+}
+</style>
