@@ -35,7 +35,7 @@ export default {
         const response = await axios.post('https://yorkpork123.pythonanywhere.com/api/login/', this.userData);
         alert('Вход выполнен успешно!');
         localStorage.setItem('user_id', response.data.user_id)
-        this.$router.push('/');  // Перенаправление на главную страницу
+        this.$router.push('/menu');  // Перенаправление на главную страницу
       } catch (error) {
         this.error = error.response.data.error || 'Ошибка при входе';
       }
