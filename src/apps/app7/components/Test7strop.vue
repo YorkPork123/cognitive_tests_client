@@ -1,20 +1,22 @@
 <template>
-    <div class="fixerr">
+    <div class="container">
       <h1>Тест Струпа сложный</h1>
       <div v-if="isTimerActive">
         <h2>Оставшееся время: {{ remainingTime }} секунд</h2>
       </div>
-      <h3>Правильные ответы: {{ right }} : {{ wrong }} Неправильные ответы</h3>
-      <br />
+      <h3>Правильные ответы: {{ right }}</h3>
+      <h3>Неправильные ответы: {{ wrong }}</h3>
       <h1>Выберите все слова с значением такого <span :style="{ color: rusrightcolor }">"оттенка"</span></h1>
-      <br />
+      <div class="words-grid">
       <div v-for="(word, id) in words" :key="id" class="word-item">
         <span :style="{ color: word.color }">{{ word.word }}</span>
         <input type="checkbox" v-model="selectedWords" :value="word.id" />
       </div>
-      <div class="word-item">
-        <button v-if="words.length > 0" class="button" @click="checkSelected">Проверить выбранные слова</button>
+    </div>
+      <div class="">
         <h2 v-if="resultMessage">{{ resultMessage }}</h2>
+        <button v-if="words.length > 0" class="button" @click="checkSelected">Проверить выбранные слова</button>
+        
         <button v-if="resultMessage" class="button" @click="nextQuiz">Следующий тест</button>
       </div>
     </div>
@@ -190,85 +192,109 @@
   };
   </script>
 
-  <style>
+<style scoped>
+.container {
+  margin: 0 auto;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+h3 {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.words-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5px;
+}
+
+.word-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 18px;
+  margin: 0;
+}
+
+.word-item span {
+  margin: 0;
+  padding: 0;
+  flex: 1;
+  white-space: nowrap;
+}
+
+.button {
+  background-color: #5092dd;
+  color: white;
+  border: none;
+  padding: 15px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 18px;
+  width: 100%;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+input[type='checkbox'] {
+  transform: scale(1.5);
+  margin-left: 10px;
+}
+
+/* Адаптация для мобильных устройств */
+@media (max-width: 600px) {
+  #app {
+    padding: 10px;
+  }
+
+  h1 {
+    font-size: 20px;
+  }
+
+  h2 {
+    font-size: 16px;
+  }
+
+  h3 {
+    font-size: 14px;
+  }
+
+  .words-grid {
+    grid-template-columns: 1fr;
+  }
+
   .word-item {
-    font-weight: bold;
-    margin: 10px 0;
-    font-size: 23px;
+    font-size: 16px;
+    flex-direction: row;
+    align-items: center;
   }
-  .fixerr {
-    position: fixed;
-    top: 20%;
-    left: 0;
-    right: 0;
-    padding: 10px 0;
-    z-index: 1000;
+
+  .word-item span {
+    margin-right: 10px;
   }
-  .button {
-    background-color: #5092dd;
-    color: white;
-    border: none;
-    padding: 15px 13px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 25px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 8px;
-    transition: background-color 0.3s;
-  }
+
   input[type='checkbox'] {
-    size: 2ch;
-    transform: scale(2);
-    padding: -5px;
-    margin: 10px;
+    transform: scale(1.2);
+    margin-left: 0;
   }
 
-  @media (max-width: 600px) {
-    #app {
-      width: 80%;
-      height: 70%;
-    }
-
-    h1 {
-      font-size: 18px;
-    }
-
-    h2 {
-      font-size: 16px;
-    }
-
-    h3 {
-      font-size: 10px;
-    }
-
-    .word-item {
-      flex-direction: column;
-      align-items: flex-start;
-      font-size: 14px;
-    }
-
-    .word-item span {
-      font-size: 14px;
-      margin-bottom: 2rem;
-      margin: 2rem 0;
-    }
-    input[type='checkbox'] {
-      size: 4px;
-      transform: scale(2);
-      padding: -1px;
-      margin: 2px;
-    }
-    .fixerr {
-      padding: 0rem;
-      z-index: 1000;
-    }
-    .button {
-      padding: 2px 1px;
-      width: 10rem;
-      height: 2rem;
-      font-size: 1rem;
-    }
+  .button {
+    padding: 10px;
+    font-size: 16px;
   }
-  </style>
+}
+</style>

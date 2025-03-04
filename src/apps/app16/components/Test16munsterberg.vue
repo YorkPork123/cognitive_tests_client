@@ -173,10 +173,11 @@
   .timer {
     font-size: 1.2em;
     font-weight: bold;
+    margin: 0;
   }
 
   .text-wrapper {
-    margin: 20px auto;
+    margin: 5px auto;
     max-width: 800px;
     text-align: left;
   }
@@ -196,7 +197,7 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin: 10px;
+    margin: 0;
   }
 
   .start-button {
@@ -216,7 +217,6 @@
 
   .result-container {
     text-align: center;
-    padding: 20px;
   }
 
   .result-count {
@@ -232,7 +232,7 @@
   .result-key {
     font-size: 1.2em;
     line-height: 1.6;
-    margin: 20px auto;
+    margin: 0px auto;
     max-width: 800px;
     text-align: left;
   }
