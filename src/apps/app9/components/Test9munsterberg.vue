@@ -57,7 +57,7 @@ export default {
     },
     startTimer() {
       this.isTimerActive = true;
-      this.remainingTime = 10;
+      this.remainingTime = 60;
 
       this.timerInterval = setInterval(() => {
         this.remainingTime--;
