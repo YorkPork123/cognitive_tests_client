@@ -14,6 +14,8 @@
       </div>
       <p v-if="showTime > 0">Запомните буквы! (Таймер: {{ showTime }})</p>
       <p v-else>Время вышло!</p>
+      <!-- Кнопка "Выйти в меню" -->
+      <button @click="exitToMenu" class="exit-button">Выйти в меню</button>
     </div>
     <div v-else>
       <div class="letter-board">
@@ -29,6 +31,8 @@
       </div>
       <button class="purple-button" @click="checkAnswer">Далее</button>
       <button class="purple-button" @click="cancelAnswer">Отменить</button>
+      <!-- Кнопка "Выйти в меню" -->
+      <button @click="exitToMenu" class="exit-button">Выйти в меню</button>
       <p v-if="gameStopped">Ваш счет: {{ score }}  Лучший результат: {{ bestResult }}</p>
     </div>
   </div>
