@@ -9,6 +9,7 @@
       </p>
       <p>Тест состоит из 50 испытаний. Пожалуйста, сосредоточьтесь и постарайтесь дать как можно больше правильных ответов.</p>
       <button @click="startTest" class="base-button start-button">Начать тест</button>
+    <button @click="exitToMenu" class="exit-button">Выйти в меню</button>
     </div>
 
     <div v-else-if="testStarted && !testFinished" class="test-container">
@@ -25,6 +26,7 @@
           <FontAwesomeIcon :icon="faArrowRight" class="answer-button-icon" />
         </button>
       </div>
+        <button @click="exitToMenu" class="exit-button">Выйти в меню</button>
     </div>
 
     <div v-else class="result-container">
@@ -34,6 +36,7 @@
       <p class="result-speed">Скорость: {{ speed }} ответов/сек</p>
       <p class="result-message">{{ resultMessage }}</p>
       <button @click="restartTest" class="base-button restart-button">Пройти тест заново</button>
+      <button @click="exitToMenu" class="exit-button">Выйти в меню</button>
     </div>
   </template>
 
@@ -153,6 +156,10 @@
           alert('Произошла ошибка при отправке результата. Попробуйте снова.');
         }
       },
+     exitToMenu() {
+          clearInterval(this.timer); // Останавливаем таймер
+          this.$router.push('/menu');
+     },
     },
   };
   </script>
@@ -231,4 +238,17 @@
     background-color: #2196f3;
     color: white;
   }
-  </style>
+  .exit-button {
+  background-color: #f44336; /* Красный цвет для кнопки выхода */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  }
+
+.exit-button:hover {
+  background-color: #d32f2f; /* Темнее красный при наведении */
+  }
+</style>
