@@ -22,10 +22,14 @@
           </div>
         </div>
         <p>Осталось времени: {{ timeLeft }} сек</p>
+        <!-- Кнопка "Выйти в меню" -->
+        <button @click="exitToMenu" class="exit-button">Выйти в меню</button>
       </div>
       <div v-else>
         <p>Правильный ответ: <span class="correct">{{ correctSequence }}</span></p>
         <button class="purple-button" @click="nextRound">Далее</button>
+        <!-- Кнопка "Выйти в меню" -->
+        <button @click="exitToMenu" class="exit-button">Выйти в меню</button>
       </div>
     </div>
     <div v-else>
