@@ -9,7 +9,7 @@
       </p>
       <p>Тест состоит из 50 испытаний. Пожалуйста, сосредоточьтесь и постарайтесь дать как можно больше правильных ответов.</p>
       <button @click="startTest" class="base-button start-button">Начать тест</button>
-    <button @click="exitToMenu" class="exit-button">Выйти в меню</button>
+      <button @click="exitToMenu" class="exit-button">Выйти в меню</button>
     </div>
 
     <div v-else-if="testStarted && !testFinished" class="test-container">
@@ -248,7 +248,7 @@
   font-size: 16px;
   }
 
-.exit-button:hover {
+ .exit-button:hover {
   background-color: #d32f2f; /* Темнее красный при наведении */
   }
 </style>
