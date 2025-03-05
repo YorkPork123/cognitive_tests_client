@@ -4,8 +4,12 @@
     <div v-if="started && !finished">
       <p>Найдите следующие числа: {{ targetNumbers.join(', ') }}</p>
       <div class="number-grid">
-        <div v-for="(number, index) in numbers" :key="index" :class="{ found: foundNumbers.includes(number) }"
-          @click="checkNumber(number)">
+        <div
+          v-for="(number, index) in numbers"
+          :key="index"
+          :class="{ found: foundNumbers.includes(number) }"
+          @click="checkNumber(number)"
+        >
           {{ number }}
         </div>
       </div>
@@ -26,6 +30,8 @@
       <p>Нажмите "Начать", чтобы начать тест.</p>
     </div>
     <button class="purple-button" v-if="!started" @click="startTest">Начать тест</button>
+    <!-- Кнопка "Выйти в меню" -->
+    <button v-if="started && !finished" @click="exitToMenu" class="exit-button">Выйти в меню</button>
   </div>
 </template>
 
@@ -129,6 +135,11 @@ export default {
         alert('Произошла ошибка при отправке результата. Попробуйте снова.');
       }
     },
+    // Метод для выхода в меню
+    exitToMenu() {
+      clearInterval(this.timerId); // Останавливаем таймер
+      this.$router.push('/menu');
+    },
   },
 };
 </script>
@@ -164,10 +175,25 @@ h1 {
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
+  margin-right: 10px; /* Отступ между кнопками */
 }
 
 .purple-button:hover {
   background-color: darkpurple;
+}
+
+.exit-button {
+  background-color: #f44336; /* Красный цвет для кнопки выхода */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.exit-button:hover {
+  background-color: #d32f2f; /* Темнее красный при наведении */
 }
 
 /* Медиа-правила для мобильных устройств */
