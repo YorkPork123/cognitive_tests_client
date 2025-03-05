@@ -67,7 +67,7 @@ export default {
     startGame() {
       this.gameStarted = true;
       this.score = 0;
-      this.time = 10;
+      this.time = 60;
       this.gameOver = false;
       this.answer = '';
       this.startTime = new Date();
