@@ -14,6 +14,8 @@
     </div>
     <div v-else-if="error" class="error">{{ error }}</div>
     <button @click="reset" class="reset-button">Сбросить</button>
+    <!-- Кнопка "Выйти в меню" -->
+    <button @click="exitToMenu" class="exit-button">Выйти в меню</button>
   </div>
 </template>
 
@@ -146,6 +148,10 @@ export default {
     handleFocus() {
       this.$refs.textInput.focus();
     },
+    // Метод для выхода в меню
+    exitToMenu() {
+      this.$router.push('/menu');
+    },
   },
   mounted() {
     this.$refs.textInput.focus();
@@ -189,6 +195,16 @@ export default {
   cursor: pointer;
 }
 
+.exit-button {
+  margin-top: 10px;
+  padding: 8px 16px;
+  background-color: #f44336; /* Красный цвет для кнопки выхода */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 /* Медиа-запросы для адаптивности */
 @media (max-width: 768px) {
   .container {
@@ -203,7 +219,8 @@ export default {
     font-size: 16px;
   }
 
-  .reset-button {
+  .reset-button,
+  .exit-button {
     width: 100%;
   }
 }
@@ -218,10 +235,10 @@ export default {
     font-size: 14px;
   }
 
-  .reset-button {
+  .reset-button,
+  .exit-button {
     padding: 6px 12px;
     margin-bottom: 20px;
   }
 }
 </style>
-
