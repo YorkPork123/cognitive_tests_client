@@ -119,7 +119,7 @@
   };
   </script>
 
-  <style>
+  <style scoped>
   .game-container {
     display: flex;
     flex-direction: column;

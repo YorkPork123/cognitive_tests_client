@@ -197,6 +197,7 @@
   margin: 0 auto;
   padding: 10px;
   box-sizing: border-box;
+  flex-direction: column;
 }
 
 h1 {
@@ -243,9 +244,8 @@ h3 {
   font-size: 14px;
   cursor: pointer;
   border-radius: 18px;
-  width: 100%;
+  width: 80%;
   margin-top: 10px;
-  display: flex;
   align-items: center;
   justify-content: center;
 }
