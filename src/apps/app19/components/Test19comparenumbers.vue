@@ -7,6 +7,7 @@
       <p>Вы увидите перед собой таблицу из 20 пар чисел. Ваша задача -
         обнаружить отличие или равенство в каждой паре и поставить соответствующий знак.</p>
       <button @click="startTest" class="base-button start-button">Начать тест</button>
+      <button class="base-button start-button" @click="exitToMenu">Выйти в меню</button>
     </div>
 
     <div v-else-if="testStarted && !testFinished" class="test-container">
@@ -48,6 +49,7 @@
         </div>
       </div>
       <button @click="finishTest" class="base-button end-button">Завершить тест</button>
+      <button class="base-button start-button" @click="exitToMenu">Выйти в меню</button>
     </div>
 
     <div v-else class="result-container">
@@ -242,7 +244,12 @@
 
       goToMenu() {
         this.$router.push("/menu");
-      }
+      },
+      exitToMenu() {
+        clearInterval(this.timerInterval); // Останавливаем таймер
+        this.$router.push('/menu'); // Переход в меню
+        this.$emit('cancel'); // Прерываем выполнение всех функций компонента
+      },
     }
   };
   </script>

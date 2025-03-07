@@ -14,6 +14,8 @@
         </div>
       </div>
       <p>Время: {{ formatTime(elapsedTime) }} / 5 мин</p>
+      <!-- Кнопка "Выйти в меню" -->
+      <button @click="exitToMenu" class="exit-button">Выйти в меню</button>
     </div>
     <div v-else-if="finished">
       <h2>Тест завершен!</h2>
@@ -28,10 +30,9 @@
     </div>
     <div v-else>
       <p>Нажмите "Начать", чтобы начать тест.</p>
+      <button class="purple-button" @click="startTest">Начать тест</button>
+      <button @click="exitToMenu" class="exit-button">Выйти в меню</button>
     </div>
-    <button class="purple-button" v-if="!started" @click="startTest">Начать тест</button>
-    <!-- Кнопка "Выйти в меню" -->
-    <button v-if="started && !finished" @click="exitToMenu" class="exit-button">Выйти в меню</button>
   </div>
 </template>
 
@@ -190,6 +191,7 @@ h1 {
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
+  margin-top: 10px; /* Отступ сверху */
 }
 
 .exit-button:hover {
@@ -219,6 +221,11 @@ h1 {
   }
 
   .purple-button {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+
+  .exit-button {
     padding: 8px 16px;
     font-size: 14px;
   }

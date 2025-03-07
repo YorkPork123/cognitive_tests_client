@@ -7,6 +7,7 @@
       <p>Для этого используйте <b>стрелки на клавиатуре</b>.</p>
       <p>Длительность игры: 60 секунд. Постарайтесь за это время набрать как можно больше очков.</p>
       <button @click="startGame">Начать игру</button>
+      <button class="exit-button" @click="exitToMenu">Выйти в меню</button>
     </div>
 
     <!-- Игра. -->
@@ -27,6 +28,7 @@
         <button @click="handleVirtualKey('ArrowLeft')">←</button>
         <button @click="handleVirtualKey('ArrowRight')">→</button>
       </div>
+      <button class="exit-button" @click="exitToMenu">Выйти в меню</button>
     </div>
 
     <!-- Сообщение об окончании игры, с выводом результата. -->
@@ -205,6 +207,11 @@ export default {
 
     goToMenu() {
       this.$router.push("/menu");
+    },
+    exitToMenu() {
+        clearInterval(this.timer); // Останавливаем таймер
+        this.$router.push('/menu'); // Переход в меню
+        this.$emit('cancel'); // Прерываем выполнение всех функций компонента
     },
 
     // Определение мобильного устройства
@@ -488,5 +495,73 @@ export default {
 
 .virtual-keyboard button:hover {
   background-color: #45a049;
+}
+.exit-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #f44336; /* Красный цвет для кнопки выхода */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+.exit-button:hover {
+  background-color: #d32f2f; /* Темнее красный при наведении */
+}
+
+/* Адаптивные стили для мобильных устройств */
+@media (max-width: 768px) {
+  .rules-modal h1 {
+    font-size: 24px;
+  }
+
+  .rules-modal p {
+    font-size: 16px;
+  }
+
+  .rules-modal button {
+    font-size: 18px;
+    padding: 8px 16px;
+  }
+
+  .game-container {
+    padding: 10px;
+  }
+
+  .score, .time, .question {
+    font-size: 18px;
+  }
+
+  .reminder {
+    font-size: 14px;
+  }
+
+  .circle {
+    width: 150px;
+    height: 150px;
+  }
+
+  .circle img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .answer {
+    font-size: 18px;
+  }
+
+  .virtual-keyboard button {
+    padding: 10px;
+    font-size: 18px;
+  }
+
+  .exit-button {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
 }
 </style>

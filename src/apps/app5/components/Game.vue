@@ -13,12 +13,12 @@
       ></div>
     </div>
     <button @click="endGame">Закончить</button>
+    <button class="exit-button" @click="exitToMenu">Выйти в меню</button>
   </div>
 </template>
 
 <script>
 import { sendTestResult } from '@/services/api'; // Импортируем метод для отправки данных
-
 
 export default {
   name: "Game",
@@ -85,7 +85,7 @@ export default {
     },
     isExamMode() {
       if (parseInt(localStorage.getItem('isExameMode') == 1)) {
-        this.isExamMode = true
+        this.isExamMode = true;
       }
     },
     async endGame() {
@@ -104,10 +104,9 @@ export default {
         accuracy: this.score, // Точность
       };
 
-
       // Сохраняем результат в localStorage
       this.saveTestResultToLocalStorage(testResult.test, testResult);
-      await sendTestResult(testResult)
+      await sendTestResult(testResult);
       this.isExamMode;
 
       // Определяем следующий тест
@@ -120,10 +119,16 @@ export default {
       );
 
       if (userConfirmed) {
-          this.$router.push('/menu');
+        this.$router.push('/menu');
       }
 
       this.$emit("endGame");
+    },
+    exitToMenu() {
+      clearInterval(this.interval);
+      clearInterval(this.circleInterval);
+      this.$router.push('/menu');
+      this.$emit('cancel'); // Прерываем выполнение всех функций компонента
     },
   },
   mounted() {
@@ -195,5 +200,19 @@ button {
   margin: 10px;
   padding: 10px 20px;
   font-size: 16px;
+}
+.exit-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #f44336; /* Красный цвет для кнопки выхода */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.exit-button:hover {
+  background-color: #d32f2f; /* Темнее красный при наведении */
 }
 </style>

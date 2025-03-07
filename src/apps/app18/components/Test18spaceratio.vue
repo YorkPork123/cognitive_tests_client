@@ -7,6 +7,7 @@
         покажут уровень вашей пространственной ориентации и способность мыслить с помощью визуальных образов.</p>
       <p>Вам необходимо ответить на 6 вопросов, основываясь на приложенных к ним изображениям.</p>
       <button @click="startTest" class="base-button start-button">Начать тест</button>
+      <button class="base-button start-button" @click="exitToMenu">Выйти в меню</button>
     </div>
 
     <div v-else-if="testStarted && !testFinished" class="test-container">
@@ -19,6 +20,7 @@
                  @click="selectAnswer(index)">
             <button v-else class="answer-button" @click="selectAnswer(index)">{{ answer.text }}</button>
           </div>
+          <button class="base-button start-button" @click="exitToMenu">Выйти в меню</button>
         </div>
       </div>
     </div>
@@ -213,7 +215,12 @@
 
       goToMenu() {
         this.$router.push("/menu");
-      }
+      },
+      exitToMenu() {
+        clearInterval(this.timerInterval); // Останавливаем таймер
+        this.$router.push('/menu'); // Переход в меню
+        this.$emit('cancel'); // Прерываем выполнение всех функций компонента
+      },
     }
   };
   </script>
@@ -727,6 +734,22 @@ html {
       margin-right: 0;
     }
   }
+  .exit-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #f44336; /* Красный цвет для кнопки выхода */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+.exit-button:hover {
+  background-color: #d32f2f; /* Темнее красный при наведении */
+}
 
   @media (max-width: 600px) {
     .answer {
@@ -747,5 +770,6 @@ html {
       width: 3rem;
       height: 3rem;
     }
+
   }
   </style>

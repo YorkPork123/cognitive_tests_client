@@ -12,6 +12,7 @@
     <button class="butt button" @click="checkWord">Проверить слово</button>
     <p class="word-item"></p>
     <h2 class="word-item" v-if="isCorrect !== null">{{ resultMessage }}</h2>
+    <button class="exit-button" @click="exitToMenu">Выйти в меню</button>
   </div>
 </template>
 
@@ -129,6 +130,11 @@ export default {
         this.generateText();
       }
     },
+    exitToMenu() {
+      clearInterval(this.timerInterval); // Останавливаем таймер
+      this.$router.push('/menu'); // Переход в меню
+      this.$emit('cancel'); // Прерываем выполнение всех функций компонента
+    },
   },
 };
 </script>
@@ -157,7 +163,7 @@ h1 {
   cursor: pointer;
   border-radius: 8px;
   transition: background-color 0.3s;
-  width: 80%; 
+  width: 80%;
 }
 
 .styled-input {
@@ -166,7 +172,7 @@ h1 {
   border-radius: 5px;
   font-size: 20px;
   transition: border-color 0.3s;
-  box-sizing: border-box; 
+  box-sizing: border-box;
 }
 
 .styled-input:focus {
@@ -177,36 +183,53 @@ h1 {
 .container {
   display: flex;
   flex-direction: column;
-  align-items: center; 
+  align-items: center;
   padding: 20px;
+}
+
+.exit-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #f44336; /* Красный цвет для кнопки выхода */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+.exit-button:hover {
+  background-color: #d32f2f; /* Темнее красный при наведении */
 }
 
 @media (max-width: 600px) {
   h1 {
-    font-size: 20px; 
+    font-size: 20px;
   }
 
   h2 {
-    font-size: 18px; 
+    font-size: 18px;
   }
 
   .word-item {
-    font-size: 16px; 
-    margin: 5px 0; 
+    font-size: 16px;
+    margin: 5px 0;
     padding: 0 40px;
   }
 
   .button {
-    font-size: 16px; 
-    padding: 10px 8px; 
+    font-size: 16px;
+    padding: 10px 8px;
   }
 
   .styled-input {
-    font-size: 16px; 
+    font-size: 16px;
   }
 
   .container {
-    padding: 10px; 
+    padding: 10px;
   }
 }
 </style>

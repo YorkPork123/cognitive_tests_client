@@ -1,24 +1,26 @@
 <template>
-    <div class="container">
-      <h1>Тест Струпа лёгкий</h1>
-      <div v-if="isTimerActive">
-        <h2>Оставшееся время: {{ remainingTime }} секунд</h2>
-      </div>
-      <h3>Правильные ответы: {{ right }}</h3>
-      <h3>Неправильные ответы: {{ wrong }}</h3>
-      <h1>Выберите все {{ rusrightcolor }} слова</h1>
-      <div class="words-grid">
-        <div v-for="(word, id) in words" :key="id" class="word-item">
-          <span :style="{ color: word.color }">{{ word.word }}</span>
-          <input type="checkbox" v-model="selectedWords" :value="word.id" />
-        </div>
-      </div>
-      <div>
-        <button v-if="words.length > 0" class="button" @click="checkSelected">Проверка</button>
-        <h2 v-if="resultMessage">{{ resultMessage }}</h2>
+  <div class="container">
+    <h1>Тест Струпа лёгкий</h1>
+    <div v-if="isTimerActive">
+      <h2>Оставшееся время: {{ remainingTime }} секунд</h2>
+    </div>
+    <h3>Правильные ответы: {{ right }}</h3>
+    <h3>Неправильные ответы: {{ wrong }}</h3>
+    <h1>Выберите все {{ rusrightcolor }} слова</h1>
+    <div class="words-grid">
+      <div v-for="(word, id) in words" :key="id" class="word-item">
+        <span :style="{ color: word.color }">{{ word.word }}</span>
+        <input type="checkbox" v-model="selectedWords" :value="word.id" />
       </div>
     </div>
+    <div>
+      <button v-if="words.length > 0" class="button" @click="checkSelected">Проверка</button>
+      <button class="exit-button" @click="exitToMenu">Выйти в меню</button>
+      <h2 v-if="resultMessage">{{ resultMessage }}</h2>
+    </div>
+  </div>
 </template>
+
 <script>
 import { sendTestResult } from '@/services/api'; // Импортируем метод для отправки данных
 
@@ -103,7 +105,7 @@ export default {
     },
     isExamMode() {
       if (parseInt(localStorage.getItem('isExameMode') == 1)) {
-        this.isExamMode = true
+        this.isExamMode = true;
       }
     },
     showAlert() {
@@ -140,7 +142,7 @@ export default {
       alert(
         `Тест завершен!\nПравильных ответов: ${this.right}\nНеправильных ответов: ${this.wrong}\nТочность: ${testResult.accuracy.toFixed(2)}%`
       );
-      await sendTestResult(testResult)
+      await sendTestResult(testResult);
       this.$router.push("/menu");
     },
     getWord(colorName) {
@@ -180,6 +182,11 @@ export default {
         [array[i], array[j]] = [array[j], array[i]];
       }
       return array;
+    },
+    exitToMenu() {
+      clearInterval(this.timerInterval); // Останавливаем таймер
+      this.$router.push('/menu'); // Переход в меню
+      this.$emit('cancel'); // Прерываем выполнение всех функций компонента
     },
   },
 };
@@ -246,6 +253,23 @@ h3 {
 input[type='checkbox'] {
   transform: scale(1.5);
   margin-left: 10px;
+}
+
+.exit-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #f44336; /* Красный цвет для кнопки выхода */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+.exit-button:hover {
+  background-color: #d32f2f; /* Темнее красный при наведении */
 }
 
 /* Адаптация для мобильных устройств */

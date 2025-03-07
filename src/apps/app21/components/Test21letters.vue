@@ -9,6 +9,7 @@
       <p>Для этого <b>используйте стрелки на клавиатуре или кнопки да/нет на экране.</b></p>
       <p>Длительность игры: 60 секунд. Постарайтесь за это время набрать как можно больше очков.</p>
       <button @click="startGame">Начать игру</button>
+      <button class="exit-button" @click="exitToMenu">Выйти в меню</button>
     </div>
 
     <!-- Игра -->
@@ -29,6 +30,7 @@
         <button @click="handleAnswer(false)" :disabled="isAnswering">Нет</button>
         <button @click="handleAnswer(true)" :disabled="isAnswering">Да</button>
       </div>
+      <button class="exit-button" @click="exitToMenu">Выйти в меню</button>
     </div>
 
     <!-- Сообщение об окончании игры, с выводом результата -->
@@ -169,7 +171,12 @@ export default {
 
     goToMenu() {
       this.$router.push("/menu");
-    }
+    },
+    exitToMenu() {
+        clearInterval(this.timer); // Останавливаем таймер
+        this.$router.push('/menu'); // Переход в меню
+        this.$emit('cancel'); // Прерываем выполнение всех функций компонента
+    },
   },
 
   // Уничтожение
@@ -211,7 +218,6 @@ export default {
   background-color: #45a049;
 }
 
-
 .score,
 .time {
   font-size: 20px;
@@ -219,7 +225,7 @@ export default {
   margin-bottom: 10px;
 }
 
-.time{
+.time {
   margin-top: 40px;
 }
 
@@ -433,7 +439,7 @@ button {
   }
 
   .rules-modal p {
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .rules-modal button {
@@ -481,5 +487,21 @@ button {
   .restart-button {
     font-size: 16px;
   }
+}
+.exit-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #f44336; /* Красный цвет для кнопки выхода */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+.exit-button:hover {
+  background-color: #d32f2f; /* Темнее красный при наведении */
 }
 </style>
