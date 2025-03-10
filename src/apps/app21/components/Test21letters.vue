@@ -1,5 +1,5 @@
 <template>
-  <div>
+
     <!-- Правила игры -->
     <div v-if="!gameStarted && !gameOver" class="rules-modal">
       <h1>"Буквы и цифры" - это игра на развитие логики и реакции.</h1>
@@ -37,7 +37,7 @@
       <button class="restart-button" @click="restartGame">Пройти заново</button>
       <button class="menu-button" @click="goToMenu">Вернуться в меню</button>
     </div>
-  </div>
+
 </template>
 
 <script>
@@ -67,7 +67,7 @@ export default {
     startGame() {
       this.gameStarted = true;
       this.score = 0;
-      this.time = 10;
+      this.time = 60;
       this.gameOver = false;
       this.answer = '';
       this.startTime = new Date();
@@ -181,21 +181,6 @@ export default {
 </script>
 
 <style scoped>
-.rules-modal {
-  text-align: center;
-  padding: 20px;
-}
-
-.rules-modal h1 {
-  font-size: 24px;
-  margin-bottom: 20px;
-}
-
-.rules-modal p {
-  font-size: 18px;
-  margin-bottom: 10px;
-}
-
 .rules-modal button {
   padding: 10px 20px;
   font-size: 18px;
@@ -210,7 +195,6 @@ export default {
 .rules-modal button:hover {
   background-color: #45a049;
 }
-
 
 .score,
 .time {
@@ -300,33 +284,30 @@ export default {
 }
 
 .rules-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
   height: 100%;
   background-color: rgba(255, 255, 255, 0.5);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 20px;
 }
 
 .rules-modal h1 {
-  font-size: 36px;
+  font-size: 30px;
   font-weight: bold;
   margin-bottom: 20px;
 }
 
 .rules-modal p {
-  font-size: 24px;
+  font-size: 16px;
   margin-bottom: 20px;
 }
 
 .rules-modal button {
   font-family: 'Comfortaa', sans-serif;
   font-size: 24px;
-  margin-top: 40px;
+  margin-top: 20px;
   padding: 10px 20px;
   border: none;
   border-radius: 10px;
@@ -352,7 +333,7 @@ export default {
 }
 
 .current-field {
-  width: 300px;
+  width: 80%;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -372,7 +353,7 @@ export default {
 
 .answer {
   position: absolute;
-  top: 400px;
+  top: 450px;
   left: 50%;
   transform: translateX(-50%);
   margin-top: 20px;
@@ -451,7 +432,7 @@ button {
   }
 
   .current-field {
-    width: 100%;
+    width: 90%;
     height: auto;
     padding: 15px;
   }

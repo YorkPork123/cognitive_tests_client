@@ -231,4 +231,11 @@
     background-color: #2196f3;
     color: white;
   }
+
+  /* Медиа-правила для мобильных устройств */
+@media (max-width: 600px) {
+  .arrow {
+    font-size: 1.7rem;
+  }
+}
   </style>

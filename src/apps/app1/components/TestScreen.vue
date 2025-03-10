@@ -24,3 +24,29 @@
   };
   </script>
 
+<style scoped>
+/* Медиа-правила для мобильных устройств */
+@media (max-width: 600px) {
+  .letter-grid {
+    font-size: 11px; 
+  }
+
+  h5 {
+    font-size: 14px; 
+    margin-bottom: 0.5rem;
+  }
+
+  textarea {
+    font-size: 12px; 
+  }
+
+  .btn {
+    font-size: 10px; 
+    padding: 0.25rem 0.5rem; 
+  }
+
+  .text-danger {
+    font-size: 12px; 
+  }
+}
+</style>

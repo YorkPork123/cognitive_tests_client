@@ -48,10 +48,10 @@ const routes = [
   { path: '/app19', component: App19Wrapper, meta: { requiresAuth: true } },
   { path: '/app20', component: App20Wrapper, meta: { requiresAuth: true } },
   { path: '/app21', component: App21Wrapper, meta: { requiresAuth: true } },
-  { path: '/results', component: Results, meta: {requiresAuth: true}  },
+  { path: '/results', component: Results, meta: { requiresAuth: true }  },
   { path: '/register', component: Register },
   { path: '/login', component: Login },
-  { path: '/menu', component: Menu, meta: {requiresAuth: true} },
+  { path: '/menu', component: Menu, meta: { requiresAuth: true } },
 ];
 
 const router = createRouter({

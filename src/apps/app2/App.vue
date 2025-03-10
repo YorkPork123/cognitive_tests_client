@@ -50,7 +50,7 @@
   };
   </script>
 
-  <style>
+  <style scoped>
   #app {
     font-family: "Arial", sans-serif;
     text-align: center;
