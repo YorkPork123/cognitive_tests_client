@@ -189,21 +189,6 @@
   </script>
 
   <style scoped>
-  .rules-modal {
-    text-align: center;
-    padding: 20px;
-  }
-
-  .rules-modal h1 {
-    font-size: 24px;
-    margin-bottom: 20px;
-  }
-
-  .rules-modal p {
-    font-size: 18px;
-    margin-bottom: 10px;
-  }
-
   .rules-modal button {
     padding: 10px 20px;
     font-size: 18px;
@@ -306,27 +291,25 @@
   .menu-button:hover {
     background-color: #e53935;
   }
+
   .rules-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
     height: 100%;
     background-color: rgba(255, 255, 255, 0.5);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding: 20px;
   }
 
   .rules-modal h1 {
-    font-size: 36px;
+    font-size: 30px;
     font-weight: bold;
     margin-bottom: 20px;
   }
 
   .rules-modal p {
-    font-size: 24px;
+    font-size: 16px;
     margin-bottom: 20px;
   }
 
@@ -347,7 +330,8 @@
     flex-direction: column;
     align-items: center;
     background-color: #fffff0;
-    height: 100vh;
+    height: 80vh;
+    margin-top: 1.2rem;
   }
 
   .score, .time, .question{
@@ -374,6 +358,7 @@
     justify-content: center;
     align-items: center;
     margin-top: 3.5vh;
+    padding: 10px;
   }
 
   .plane-up {

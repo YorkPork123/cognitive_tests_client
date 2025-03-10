@@ -26,4 +26,12 @@
     font-size: 24px;
     cursor: pointer;
   }
+
+  @media (max-width: 600px) {
+  h1 {
+    font-size: 14px; 
+    margin-left: 1rem;
+    margin-right: 0.5rem;
+  }
+}
   </style>

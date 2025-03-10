@@ -1,28 +1,26 @@
 <template>
-  <div id="app">
-    <div class="fixerr">
+    <div class="container">
       <h1>Тест Струпа лёгкий</h1>
       <div v-if="isTimerActive">
         <h2>Оставшееся время: {{ remainingTime }} секунд</h2>
       </div>
-      <h3>Правильные ответы: {{ right }} : {{ wrong }} Неправильные ответы</h3>
-      <br />
+      <h3>Правильные ответы: {{ right }}</h3>
+      <h3>Неправильные ответы: {{ wrong }}</h3>
       <h1>Выберите все {{ rusrightcolor }} слова</h1>
-      <br />
-      <div v-for="(word, id) in words" :key="id" class="word-item">
-        <span :style="{ color: word.color }">{{ word.word }}</span>
-        <input type="checkbox" v-model="selectedWords" :value="word.id" />
+      <div class="words-grid">
+        <div v-for="(word, id) in words" :key="id" class="word-item">
+          <span :style="{ color: word.color }">{{ word.word }}</span>
+          <input type="checkbox" v-model="selectedWords" :value="word.id" />
+        </div>
       </div>
       <div>
-        <button v-if="words.length > 0" class="butt button" @click="checkSelected">Проверка</button>
+        <button v-if="words.length > 0" class="button" @click="checkSelected">Проверка</button>
         <h2 v-if="resultMessage">{{ resultMessage }}</h2>
       </div>
     </div>
-  </div>
 </template>
-
 <script>
-import { sendTestResult} from '@/services/api'; // Импортируем метод для отправки данных
+import { sendTestResult } from '@/services/api'; // Импортируем метод для отправки данных
 
 export default {
   data() {
@@ -187,45 +185,77 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+.container {
+  margin: 0 auto;
+  padding: 10px;
+  box-sizing: border-box;
+  flex-direction: column;
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+h3 {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.words-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5px;
+}
 
 .word-item {
-  font-weight: bold;
-  margin: 10px 0;
-  font-size: 23px;
-}
-.but {
-  color: black;
-  border: none;
-  padding: 15px 13px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   font-size: 18px;
-  margin: 4px 2px;
-  cursor: pointer;
-  border-radius: 8px;
-  transition: background-color 0.3s;
-}
-.button {
-  background-color: #5092dd;
-}
-input[type='checkbox'] {
-  size: 2px;
-  transform: scale(2);
-  padding: -5px;
-  margin: 10px;
+  margin: 0;
 }
 
+.word-item span {
+  margin: 0;
+  padding: 0;
+  flex: 1;
+  white-space: nowrap;
+}
+
+.button {
+  background-color: #5092dd;
+  color: white;
+  border: none;
+  padding: 15px 20px;
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: 8px;
+  width: 80%;
+  margin-top: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+input[type='checkbox'] {
+  transform: scale(1.5);
+  margin-left: 10px;
+}
+
+/* Адаптация для мобильных устройств */
 @media (max-width: 600px) {
   #app {
-    padding: 2px;
-    width: 80%;
-    height: 70%;
+    padding: 10px;
   }
 
   h1 {
-    font-size: 18px;
+    font-size: 20px;
   }
 
   h2 {
@@ -233,35 +263,31 @@ input[type='checkbox'] {
   }
 
   h3 {
-    font-size: 10px;
+    font-size: 14px;
+  }
+
+  .words-grid {
+    grid-template-columns: 1fr;
   }
 
   .word-item {
-    flex-direction: column;
-    align-items: flex-start;
-    font-size: 14px;
+    font-size: 16px;
+    flex-direction: row;
+    align-items: center;
   }
 
   .word-item span {
-    font-size: 14px;
-    margin-bottom: 2rem;
-    margin: 2rem 0;
+    margin-right: 10px;
   }
+
   input[type='checkbox'] {
-    size: 4px;
-    transform: scale(2);
-    padding: -1px;
-    margin: 2px;
+    transform: scale(1.2);
+    margin-left: 0;
   }
-  .fixerr {
-    padding: 0rem;
-    z-index: 1000;
-  }
-  .but {
-    padding: 2px 1px;
-    width: 10rem;
-    height: 2rem;
-    font-size: 1rem;
+
+  .button {
+    padding: 10px;
+    font-size: 16px;
   }
 }
 </style>

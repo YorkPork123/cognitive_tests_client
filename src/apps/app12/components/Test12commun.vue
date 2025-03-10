@@ -317,4 +317,14 @@
   .purple-button:hover {
     background-color: darkpurple;
   }
+
+  @media (max-width: 600px) {
+  h1 {
+    font-size: 30px;
+  }
+
+  h3 {
+    font-size: 18px;
+  }
+}
   </style>

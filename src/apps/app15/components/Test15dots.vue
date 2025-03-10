@@ -153,7 +153,7 @@
 
   .letters span {
     margin: 0;
-    padding: 0.5em 1em;
+    padding: 0.5em;
     border: 1px solid #ccc;
     cursor: pointer;
     border-radius: 5px;

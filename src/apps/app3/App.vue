@@ -43,11 +43,22 @@ export default {
 };
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<style scoped>
+ #app {
+    font-family: "Arial", sans-serif;
+    text-align: center;
+    color: #333;
+    background-color: #eef1f5;
+    height: 100vh;
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+  }
+
+@media (max-width: 600px) {
+  h1 {
+    font-size: 14px; 
+    margin-left: 0.5rem;
+  }
 }
 </style>
