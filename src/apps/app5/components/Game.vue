@@ -12,7 +12,7 @@
         @mouseleave="cursorInside = false"
       ></div>
     </div>
-    <div class="score">Оставшееся время: { timeLeft/60000 } : { timeLeft/1000 }</div>
+    <div class="time">Оставшееся время: {{ timeLeft/60000 }} : {{ timeLeft/1000 }}</div>
     <button @click="endGame">Закончить</button>
   </div>
 </template>
@@ -166,6 +166,13 @@ export default {
 }
 .score {
   position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 18px;
+  font-weight: bold;
+}
+.time {
+  position: relative;
   top: 10px;
   right: 10px;
   font-size: 18px;
