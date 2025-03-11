@@ -12,7 +12,6 @@
         @mouseleave="cursorInside = false"
       ></div>
     </div>
-    <div class="time">Оставшееся время: {{ timeLeft/60000 }} : {{ timeLeft/1000 }}</div>
     <button @click="endGame">Закончить</button>
   </div>
 </template>
