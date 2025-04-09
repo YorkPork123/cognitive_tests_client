@@ -1,5 +1,12 @@
 <template>
   <div class="">
+    <div v-if="!isTestStarted" >
+        <h1>Тест Мюнсберга</h1>
+        <p>Вам будет дано 60 секунд. </p>
+        <p>За это время ваша задача найти все слова в тексте и напечатать их </p>
+        <button @click="startTest">Начать тест</button>
+    </div>
+    <div v-else >
     <div v-if="isTimerActive">
       <h2>Оставшееся время: {{ remainingTime }} секунд</h2>
     </div>
@@ -11,7 +18,7 @@
     <input v-model="userInput" class="styled-input" placeholder="Введите слово" />
     <button class="butt button" @click="checkWord">Проверить слово</button>
     <p class="word-item"></p>
-    <h2 class="word-item" v-if="isCorrect !== null">{{ resultMessage }}</h2>
+    <h2 class="word-item" v-if="isCorrect !== null">{{ resultMessage }}</h2></div>
   </div>
 </template>
 
@@ -20,7 +27,7 @@ import { sendTestResult } from '@/services/api'; // Импортируем ме�
 
 export default {
   mounted() {
-    this.showAlert();
+    
   },
   data() {
     return {
@@ -43,21 +50,21 @@ export default {
       isTimerActive: false,
       remainingTime: 60,
       timerInterval: null,
+      isTestStarted: false,
     };
   },
   beforeUnmount() {
     clearInterval(this.timerInterval);
   },
   methods: {
-    showAlert() {
-      alert(
-        'Тест 9\n Вам будет дано 60 секунд. \n За это время ваша задача найти все слова в тексте и напечатать их'
-      );
+    startTest(){
+      this.isTestStarted=true,
       this.startTimer();
     },
+    
     startTimer() {
       this.isTimerActive = true;
-      this.remainingTime = 10;
+      this.remainingTime = 60;
 
       this.timerInterval = setInterval(() => {
         this.remainingTime--;
@@ -88,7 +95,7 @@ export default {
       try {
         await sendTestResult(testResult);
         alert(
-          `Тест завершен!\nВы нашли ${this.allpoints} слов за 60 секунд!\nМожете перейти к следующему тесту.`
+          `Тест завершен!\nВы нашли ${this.points} ${this.allpoints} слов за 60 секунд!\nМожете перейти к следующему тесту.`
         );
         this.$router.push('/menu'); // Возвращаемся в меню
       } catch (error) {

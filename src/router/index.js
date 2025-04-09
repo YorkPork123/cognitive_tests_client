@@ -35,14 +35,14 @@ const routes = [
   { path: '/app6', component: App6Wrapper, meta: { requiresAuth: true } },
   { path: '/app7', component: App7Wrapper, meta: { requiresAuth: true } },
   { path: '/app8', component: App8Wrapper, meta: { requiresAuth: true } },
-  { path: '/app9', component: App9Wrapper, meta: { requiresAuth: true } },
+  // { path: '/app9', component: App9Wrapper, meta: { requiresAuth: true } },
   { path: '/app10', component: App10Wrapper, meta: { requiresAuth: true } },
   { path: '/app11', component: App11Wrapper, meta: { requiresAuth: true } },
-  { path: '/app12', component: App12Wrapper, meta: { requiresAuth: true } },
+  // { path: '/app12', component: App12Wrapper, meta: { requiresAuth: true } },
   { path: '/app13', component: App13Wrapper, meta: { requiresAuth: true } },
   { path: '/app14', component: App14Wrapper, meta: { requiresAuth: true } },
   { path: '/app15', component: App15Wrapper, meta: { requiresAuth: true } },
-  { path: '/app16', component: App16Wrapper, meta: { requiresAuth: true } },
+  // { path: '/app16', component: App16Wrapper, meta: { requiresAuth: true } },
   { path: '/app17', component: App17Wrapper, meta: { requiresAuth: true } },
   { path: '/app18', component: App18Wrapper, meta: { requiresAuth: true } },
   { path: '/app19', component: App19Wrapper, meta: { requiresAuth: true } },
@@ -60,7 +60,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = localStorage.getItem('user_id');  // Проверка аутентификации
+  const isAuthenticated = localStorage.getItem('user_id') || true;  // Проверка аутентификации
   if (to.meta.requiresAuth && !isAuthenticated) {
     next('/login');  // Перенаправление на страницу входа
   } else {

@@ -11,6 +11,7 @@
         <input type="password" id="password" v-model="userData.password" required>
       </div>
       <button type="submit">Войти</button>
+      <button type="button" @click="goToRegisterScreen">Зарегистрироваться</button>
     </form>
     <p v-if="error" class="error-message">{{ error }}</p>
   </div>
@@ -39,6 +40,9 @@ export default {
       } catch (error) {
         this.error = error.response.data.error || 'Ошибка при входе';
       }
+    },
+    goToRegisterScreen() {
+      this.$router.push('/register');
     },
   },
 };
@@ -91,6 +95,7 @@ export default {
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
+  margin-top: 10px;
 }
 
 .login-form button:hover {

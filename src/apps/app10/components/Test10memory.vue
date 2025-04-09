@@ -1,7 +1,15 @@
 <template>
   <div id="app" class="fixerr">
+    <div v-if="!isTestStarted" >
+        <h1>Тест на кратковременную память</h1>
+        <p>Вам будет дано 60 секунд. </p>
+        <p>Дается 5 секунд чтобы запомнить 3 картинки, их необходимо как можно быстрее найти в матрице! </p>
+        <button @click="startTest">Начать тест</button>
+    </div>
+    <div v-else >
+
     <h1>Тест на кратковременную память</h1>
-    <div v-if="isTimerActive">
+    <div v-if="isTimerActive" >
       <h2>Оставшееся время: {{ remainingTime }} секунд</h2>
     </div>
     <h3>Правильные ответы: {{ right }} : {{ wrong }} Неправильные ответы</h3>
@@ -25,6 +33,8 @@
       </div>
     </div>
   </div>
+  </div>
+
 </template>
 
 <script>
@@ -92,17 +102,22 @@ export default {
       isTimerActive: false,
       remainingTime: 60,
       timerInterval: null,
+      isTestStarted: false,
     };
   },
   beforeUnmount() {
     clearInterval(this.timerInterval);
   },
   methods: {
-    showAlert() {
-      alert(
-        'Тест 5\n Вам будет дано 60 секунд. \n Дается 5 секунд чтобы запомнить 3 картинки, их необходимо найти в матрице'
-      );
+    startTest() {
+      console.log(this.isTestStarted)
+      this.isTestStarted = true; // Устанавливаем состояние, что тест начат
+      this.startGame();
+      console.log(this.isTestStarted)
+    },
+    startGame(){
       this.startTimer();
+      this.selectRandomImages();
     },
     startTimer() {
       this.isTimerActive = true;
@@ -183,8 +198,7 @@ export default {
     },
   },
   mounted() {
-    this.showAlert();
-    this.selectRandomImages();
+    
   },
 };
 </script>

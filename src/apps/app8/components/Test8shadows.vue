@@ -1,5 +1,12 @@
 <template>
   <div class="container">
+    <div v-if="!isTestStarted" >
+        <h1>Тест Струпа</h1>
+        <p>Вам будет дано 60 секунд. </p>
+        <p>За это время ваша задача найти квадрат в массиве, такого же цвета как в задани </p>
+        <button @click="startTest">Начать тест</button>
+    </div>
+    <div v-else >
     <h1>Тест Струпа на оттенки</h1>
     <div v-if="isTimerActive">
       <h2>Оставшееся время: {{ remainingTime }} секунд</h2>
@@ -19,6 +26,7 @@
       <h2 v-if="resultMessage">{{ resultMessage }}</h2>
     </div>
   </div>
+  </div>
 </template>
 
 <script>
@@ -26,8 +34,7 @@ import { sendTestResult } from '@/services/api'; // Импортируем ме�
 
 export default {
   mounted() {
-    this.showAlert();
-    this.generateColors();
+ 
   },
   data() {
     return {
@@ -39,6 +46,7 @@ export default {
         purple: ['#DDA0DD', '#9370DB', '#BA55D3', '#800080', '#4B0082', '#91068f', '#91068f', '#ab3fa9', '#c25dc0', '#ac5dc2', '#a318c9', '#b602e8'],
       },
       targetColor: '',
+      isTestStarted: false,
       options: [],
       right: 0,
       wrong: 0,
@@ -52,15 +60,15 @@ export default {
     clearInterval(this.timerInterval);
   },
   methods: {
-    showAlert() {
-      alert(
-        'Тест 8\n Вам будет дано 60 секунд. \n За это время ваша задача найти квадрат в массиве, такого же цвета как в задании'
-      );
+    startTest(){
+      this.isTestStarted=true,
       this.startTimer();
+      this.generateColors();
     },
+ 
     startTimer() {
       this.isTimerActive = true;
-      this.remainingTime = 10;
+      this.remainingTime = 60;
 
       this.timerInterval = setInterval(() => {
         this.remainingTime--;
