@@ -1,36 +1,41 @@
 <template>
-  <div>
+  <div class="test-container">
     <h5 class="text-center mb-3">Выделите найденные слова в тексте ниже</h5>
-    <div
-      class="bg-light p-3 mb-3 text-monospace letter-grid"
-      ref="textContainer"
-      @touchend="handleSelection"
-      @touchcancel="cancelSelection"
-    >
-      <div v-for="(line, lineIndex) in textLines" :key="lineIndex" class="text-line">
-        <span
-          v-for="(char, charIndex) in line"
-          :key="`${lineIndex}-${charIndex}`"
-          :class="getCharClass(lineIndex, charIndex)"
-          :data-line="lineIndex"
-          :data-char="charIndex"
-          @touchstart="handleTouchStart"
-          @touchmove="handleTouchMove"
-        >
-          {{ char }}
-        </span>
+    
+    <div class="text-wrapper">
+      <div
+        class="letter-grid"
+        ref="textContainer"
+        @touchend="handleSelection"
+        @touchcancel="cancelSelection"
+      >
+        <div v-for="(line, lineIndex) in textLines" :key="lineIndex" class="text-line">
+          <span
+            v-for="(char, charIndex) in line"
+            :key="`${lineIndex}-${charIndex}`"
+            :class="getCharClass(lineIndex, charIndex)"
+            :data-line="lineIndex"
+            :data-char="charIndex"
+            @touchstart="handleTouchStart"
+            @touchmove="handleTouchMove"
+          >
+            {{ char }}
+          </span>
+        </div>
       </div>
     </div>
     
-    <div class="d-flex justify-content-between align-items-center">
+    <div class="controls">
       <button class="btn btn-warning" @click="finishTest">Завершить</button>
-      <div class="text-danger timer">{{ formattedTime }}</div>
+      <div class="timer">{{ formattedTime }}</div>
     </div>
     
-    <div class="found-words mt-3">
+    <div class="found-words">
       <h6>Найденные слова: {{ selectedWords.length }}</h6>
-      <div class="word-badge" v-for="(word, idx) in selectedWords" :key="idx">
-        {{ word }}
+      <div class="word-badges">
+        <div class="word-badge" v-for="(word, idx) in selectedWords" :key="idx">
+          {{ word }}
+        </div>
       </div>
     </div>
   </div>
@@ -47,7 +52,8 @@ export default {
       wordIndices: [],
       textLines: [],
       touchStartPos: null,
-      isSelecting: false
+      isSelecting: false,
+      fontSize: 16 // Начальный размер шрифта
     }
   },
   computed: {
@@ -62,17 +68,42 @@ export default {
       immediate: true,
       handler(newVal) {
         this.textLines = newVal.split('\n').map(line => line.split(''));
+        this.$nextTick(this.adjustFontSize);
       }
     }
   },
   mounted() {
-    // Для предотвращения скролла страницы при выделении
+    window.addEventListener('resize', this.adjustFontSize);
     document.addEventListener('touchmove', this.preventScroll, { passive: false });
+    this.adjustFontSize();
   },
   beforeUnmount() {
+    window.removeEventListener('resize', this.adjustFontSize);
     document.removeEventListener('touchmove', this.preventScroll);
   },
   methods: {
+    adjustFontSize() {
+      // Автоподбор размера шрифта под экран
+      const container = this.$refs.textContainer;
+      if (!container) return;
+      
+      let fontSize = 16;
+      let fits = false;
+      
+      // Проверяем, помещается ли текст
+      const checkFit = () => {
+        container.style.fontSize = `${fontSize}px`;
+        return container.scrollWidth <= container.clientWidth;
+      };
+      
+      // Уменьшаем шрифт пока текст не поместится
+      while (fontSize > 10 && !fits) {
+        fits = checkFit();
+        if (!fits) fontSize -= 1;
+      }
+      
+      this.fontSize = fontSize;
+    },
     preventScroll(e) {
       if (this.isSelecting) {
         e.preventDefault();
@@ -115,7 +146,7 @@ export default {
           this.currentSelection = [{ line: lineIndex, char: charIndex }];
         } else {
           const start = this.currentSelection[0];
-          if (start.line === lineIndex) { // Только в одной строке
+          if (start.line === lineIndex) {
             const minChar = Math.min(start.char, charIndex);
             const maxChar = Math.max(start.char, charIndex);
             
@@ -141,9 +172,7 @@ export default {
         return;
       }
       
-      // Сортируем выделение
       const sortedSelection = [...this.currentSelection].sort((a, b) => a.char - b.char);
-      
       const word = sortedSelection
         .map(pos => this.textLines[pos.line][pos.char])
         .join('');
@@ -163,91 +192,124 @@ export default {
 </script>
 
 <style scoped>
+.test-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.text-wrapper {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 10px;
+}
+
 .letter-grid {
   font-family: monospace;
-  font-size: 22px; /* Увеличенный размер для мобильных */
   user-select: none;
   -webkit-user-select: none;
-  touch-action: none; /* Отключаем стандартные touch-действия */
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+  touch-action: none;
+  height: 100%;
+  overflow-y: auto;
+  padding: 5px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
 }
 
 .text-line {
   white-space: pre;
-  line-height: 2.5; /* Больше межстрочный интервал */
+  line-height: 1.8;
   word-break: keep-all;
   display: block;
+  margin: 0;
+  font-size: v-bind('fontSize + "px"');
 }
 
 .currently-selected {
   background-color: #ffeb3b;
   color: #000;
   border-radius: 3px;
-  padding: 0 2px;
+  padding: 0 1px;
 }
 
 .word-highlighted {
   background-color: #a5d6a7;
   color: #000;
   border-radius: 3px;
-  padding: 0 2px;
+  padding: 0 1px;
 }
 
-.found-words {
-  border-top: 1px solid #eee;
-  padding-top: 10px;
-  margin-bottom: 20px;
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
 }
 
-.word-badge {
-  display: inline-block;
-  background: #e0e0e0;
-  padding: 6px 12px;
-  margin: 4px;
-  border-radius: 12px;
-  font-size: 16px;
+.btn {
+  padding: 10px 20px;
+  min-width: 120px;
 }
 
 .timer {
   font-size: 1.2rem;
   font-weight: bold;
+  color: #dc3545;
 }
 
-.btn {
-  padding: 10px 20px;
-  font-size: 16px;
-  min-width: 120px;
+.found-words {
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+  max-height: 20vh;
+  overflow-y: auto;
 }
 
-@media (max-width: 480px) {
-  .letter-grid {
-    font-size: 20px;
-    line-height: 2.8;
-    padding: 10px 5px;
-  }
-  
-  .word-badge {
-    font-size: 14px;
-    padding: 5px 10px;
-  }
-  
-  .btn {
-    padding: 8px 16px;
-    font-size: 14px;
-    min-width: 100px;
-  }
-  
-  .timer {
-    font-size: 1.1rem;
-  }
+.word-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.word-badge {
+  background: #e0e0e0;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 0.9rem;
 }
 
 /* Увеличиваем область касания для букв */
 .text-line span {
-  padding: 4px 1px;
+  padding: 3px 1px;
   display: inline-block;
-  min-width: 18px;
+  min-width: 14px;
   text-align: center;
+}
+
+@media (max-width: 480px) {
+  .text-line {
+    line-height: 2;
+  }
+  
+  .btn {
+    padding: 8px 12px;
+    min-width: 100px;
+    font-size: 0.9rem;
+  }
+  
+  .timer {
+    font-size: 1rem;
+  }
+  
+  .word-badge {
+    padding: 4px 8px;
+    font-size: 0.8rem;
+  }
+  
+  .text-line span {
+    min-width: 12px;
+  }
 }
 </style>
