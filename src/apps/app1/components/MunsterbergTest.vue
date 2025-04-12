@@ -1,9 +1,9 @@
 <template>
-  <div class="test-app">
+  <div class="munsterberg-test">
     <!-- Стартовый экран -->
-    <div v-if="screen === 'start'" class="start-screen text-center">
+    <div v-if="screen === 'start'" class="start-screen">
       <h2>Тест Мюнстерберга на внимание</h2>
-      <p>После запуска у Вас будет 2 минуты, чтобы найти как можно больше слов в зашифрованном тексте.</p>
+      <p>После запуска у Вас будет 2 минуты, чтобы найти как можно больше слов в зашифрованном тексте. Нажмите на кнопку, чтобы начать.</p>
       <button class="btn btn-primary" @click="startTest">Начать</button>
     </div>
 
@@ -14,6 +14,7 @@
       <div
         class="letter-grid"
         ref="textContainer"
+        @mouseup="handleSelection"
         @touchend="handleSelection"
         @touchcancel="cancelSelection"
       >
@@ -24,7 +25,9 @@
             :class="getCharClass(lineIndex, charIndex)"
             :data-line="lineIndex"
             :data-char="charIndex"
-            @touchstart="handleTouchStart"
+            @mousedown="startSelection(lineIndex, charIndex)"
+            @touchstart="handleTouchStart($event, lineIndex, charIndex)"
+            @mouseenter="extendSelection(lineIndex, charIndex)"
             @touchmove="handleTouchMove"
           >
             {{ char }}
@@ -57,7 +60,7 @@
     </div>
 
     <!-- Экран результатов -->
-    <div v-if="screen === 'result'" class="result-screen text-center">
+    <div v-if="screen === 'result'" class="result-screen">
       <h2>Результаты</h2>
       <p>Найдено слов: <strong>{{ correctWordsCount }}</strong> из {{ wordsToFind.length }}</p>
       <p>Уровень внимания: <strong>{{ attentionLevel }}</strong></p>
@@ -71,6 +74,7 @@
       
       <div class="buttons-container">
         <button class="btn btn-primary" @click="restartTest">Попробовать снова</button>
+        <button class="btn btn-primary" @click="saveResults">Вернуться в меню</button>
         <button class="btn btn-info" @click="showDetails = !showDetails">
           {{ showDetails ? 'Скрыть детали' : 'Показать детали' }}
         </button>
@@ -106,7 +110,7 @@ export default {
       textLines: [],
       touchStartPos: null,
       isSelecting: false,
-      fontSize: 16
+      lastTouchIndex: null
     };
   },
   computed: {
@@ -248,6 +252,15 @@ export default {
     restartTest() {
       this.screen = 'start';
     },
+    saveResults() {
+      // Здесь можно добавить логику сохранения результатов
+      console.log('Результаты сохранены:', {
+        correct: this.correctWordsCount,
+        total: this.wordsToFind.length,
+        words: this.guessedWords
+      });
+      this.$emit('return-to-menu');
+    },
     // Методы для работы с выделением текста
     getCharClass(lineIndex, charIndex) {
       const isSelected = this.currentSelection.some(
@@ -261,41 +274,57 @@ export default {
       if (isInWord) return 'word-highlighted';
       return '';
     },
-    handleTouchStart(e) {
+    startSelection(lineIndex, charIndex) {
       this.isSelecting = true;
-      const touch = e.touches[0];
+      this.currentSelection = [{ line: lineIndex, char: charIndex }];
+      this.lastTouchIndex = { line: lineIndex, char: charIndex };
+    },
+    handleTouchStart(event, lineIndex, charIndex) {
+      event.preventDefault();
+      this.startSelection(lineIndex, charIndex);
       this.touchStartPos = {
-        x: touch.clientX,
-        y: touch.clientY
+        x: event.touches[0].clientX,
+        y: event.touches[0].clientY
       };
-      this.updateSelectionFromTouch(touch);
     },
-    handleTouchMove(e) {
+    extendSelection(lineIndex, charIndex) {
       if (!this.isSelecting) return;
-      const touch = e.touches[0];
-      this.updateSelectionFromTouch(touch);
-      e.preventDefault();
+      
+      this.lastTouchIndex = { line: lineIndex, char: charIndex };
+      this.updateSelection();
     },
-    updateSelectionFromTouch(touch) {
+    handleTouchMove(event) {
+      if (!this.isSelecting) return;
+      
+      const touch = event.touches[0];
       const element = document.elementFromPoint(touch.clientX, touch.clientY);
+      
       if (element && element.dataset.line !== undefined) {
         const lineIndex = parseInt(element.dataset.line);
         const charIndex = parseInt(element.dataset.char);
         
-        if (this.currentSelection.length === 0) {
-          this.currentSelection = [{ line: lineIndex, char: charIndex }];
-        } else {
-          const start = this.currentSelection[0];
-          if (start.line === lineIndex) {
-            const minChar = Math.min(start.char, charIndex);
-            const maxChar = Math.max(start.char, charIndex);
-            
-            this.currentSelection = Array.from(
-              { length: maxChar - minChar + 1 },
-              (_, i) => ({ line: lineIndex, char: minChar + i })
-            );
-          }
+        if (!this.lastTouchIndex || 
+            this.lastTouchIndex.line !== lineIndex || 
+            this.lastTouchIndex.char !== charIndex) {
+          this.lastTouchIndex = { line: lineIndex, char: charIndex };
+          this.updateSelection();
         }
+      }
+    },
+    updateSelection() {
+      if (!this.lastTouchIndex) return;
+      
+      const start = this.currentSelection[0];
+      const end = this.lastTouchIndex;
+      
+      if (start.line === end.line) {
+        const minChar = Math.min(start.char, end.char);
+        const maxChar = Math.max(start.char, end.char);
+        
+        this.currentSelection = Array.from(
+          { length: maxChar - minChar + 1 },
+          (_, i) => ({ line: start.line, char: minChar + i })
+        );
       }
     },
     handleSelection() {
@@ -336,40 +365,9 @@ export default {
 </script>
 
 <style scoped>
-.test-app {
-  font-family: Arial, sans-serif;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-/* Общие стили */
-.btn {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  margin: 10px 5px;
-}
-.btn-primary {
-  background-color: #007bff;
-  color: white;
-}
-.btn-warning {
-  background-color: #ffc107;
-  color: #212529;
-}
-.btn-info {
-  background-color: #17a2b8;
-  color: white;
-}
-.text-success { color: #28a745; }
-.text-danger { color: #dc3545; }
-.text-warning { color: #ffc107; }
-
 /* Стартовый экран */
 .start-screen {
+  text-align: center;
   padding: 20px;
 }
 .start-screen h2 {
@@ -378,6 +376,11 @@ export default {
 .start-screen p {
   margin-bottom: 30px;
   font-size: 18px;
+}
+.start-screen .btn {
+  padding: 10px 20px;
+  font-size: 16px;
+  margin-top: 20px;
 }
 
 /* Экран теста */
@@ -390,36 +393,34 @@ export default {
 .letter-grid {
   font-family: monospace;
   font-size: 18px;
+  line-height: 1.8;
+  white-space: pre-wrap;
   user-select: none;
   -webkit-user-select: none;
-  touch-action: none;
-  overflow-y: auto;
-  padding: 10px;
+  touch-action: manipulation;
   background-color: #f8f9fa;
+  padding: 15px;
   border-radius: 5px;
-  flex-grow: 1;
   margin-bottom: 15px;
+  overflow-x: auto;
 }
 
 .text-line {
   white-space: pre;
-  line-height: 1.8;
-  word-break: keep-all;
   display: block;
-  margin: 0;
 }
 
 .currently-selected {
   background-color: #ffeb3b;
   color: #000;
-  border-radius: 3px;
+  border-radius: 2px;
   padding: 0 1px;
 }
 
 .word-highlighted {
   background-color: #a5d6a7;
   color: #000;
-  border-radius: 3px;
+  border-radius: 2px;
   padding: 0 1px;
 }
 
@@ -427,7 +428,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 0;
+  margin-bottom: 15px;
 }
 
 .timer {
@@ -439,8 +440,6 @@ export default {
 .found-words {
   border-top: 1px solid #eee;
   padding-top: 10px;
-  max-height: 20vh;
-  overflow-y: auto;
 }
 
 .word-badges {
@@ -451,10 +450,11 @@ export default {
 }
 
 .word-badge {
+  display: inline-block;
   background: #e0e0e0;
-  padding: 5px 10px;
+  padding: 4px 10px;
   border-radius: 12px;
-  font-size: 0.9rem;
+  font-size: 14px;
 }
 
 /* Модальное окно */
@@ -486,57 +486,73 @@ export default {
 
 /* Экран результатов */
 .result-screen {
+  text-align: center;
   padding: 20px;
 }
 
 .results-details {
-  margin: 20px 0;
+  margin: 20px auto;
   padding: 15px;
   background-color: #f8f9fa;
   border-radius: 5px;
   text-align: left;
+  max-width: 600px;
 }
 
 .buttons-container {
-  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  gap: 10px;
 }
 
-/* Адаптивность */
+.btn {
+  padding: 10px 20px;
+  font-size: 16px;
+  min-width: 200px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-warning {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.btn-info {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.text-success { color: #28a745; }
+.text-danger { color: #dc3545; }
+.text-warning { color: #ffc107; }
+
 @media (max-width: 600px) {
-  .test-app {
-    padding: 10px;
-  }
-  
   .letter-grid {
     font-size: 16px;
     line-height: 2;
   }
   
   .word-badge {
-    padding: 4px 8px;
-    font-size: 0.8rem;
+    font-size: 12px;
+    padding: 3px 8px;
   }
   
   .btn {
-    padding: 8px 16px;
+    min-width: 160px;
     font-size: 14px;
+    padding: 8px 16px;
   }
   
   .timer {
-    font-size: 1rem;
-  }
-}
-
-@media (max-width: 400px) {
-  .letter-grid {
-    font-size: 14px;
-  }
-  
-  .start-screen h2 {
-    font-size: 1.5rem;
-  }
-  
-  .start-screen p {
     font-size: 1rem;
   }
 }
