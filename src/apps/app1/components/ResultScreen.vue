@@ -76,10 +76,10 @@ export default {
     },
     attentionLevel() {
       const percentage = (this.correctWordsCount / this.wordsToFind.length) * 100;
-      if (percentage < 30) return 'Очень низкий';
+      if (percentage < 30) return 'Низкий';
       if (percentage < 50) return 'Низкий';
       if (percentage < 70) return 'Средний';
-      if (percentage < 90) return 'Выше среднего';
+      if (percentage < 90) return 'Выcокий';
       return 'Высокий';
     }
   },
