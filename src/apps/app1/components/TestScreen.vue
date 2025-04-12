@@ -1,38 +1,41 @@
 <template>
-  <div>
+  <div class="test-container">
     <h5 class="text-center mb-3">Выделите найденные слова в тексте ниже</h5>
-    <div
-      class="bg-light p-3 mb-3 text-monospace letter-grid"
-      ref="textContainer"
-      @mouseup="handleSelection"
-      @touchend="handleSelection"
-      @touchcancel="cancelSelection"
-    >
-      <div v-for="(line, lineIndex) in textLines" :key="lineIndex" class="text-line">
-        <span
-          v-for="(char, charIndex) in line"
-          :key="`${lineIndex}-${charIndex}`"
-          :class="getCharClass(lineIndex, charIndex)"
-          :data-line="lineIndex"
-          :data-char="charIndex"
-          @mousedown="startSelection(lineIndex, charIndex)"
-          @touchstart="handleTouchStart($event, lineIndex, charIndex)"
-          @mouseenter="extendSelection(lineIndex, charIndex)"
-        >
-          {{ char }}
-        </span>
+    
+    <div class="text-wrapper">
+      <div
+        class="letter-grid"
+        ref="textContainer"
+        @touchend="handleSelection"
+        @touchcancel="cancelSelection"
+      >
+        <div v-for="(line, lineIndex) in textLines" :key="lineIndex" class="text-line">
+          <span
+            v-for="(char, charIndex) in line"
+            :key="`${lineIndex}-${charIndex}`"
+            :class="getCharClass(lineIndex, charIndex)"
+            :data-line="lineIndex"
+            :data-char="charIndex"
+            @touchstart="handleTouchStart"
+            @touchmove="handleTouchMove"
+          >
+            {{ char }}
+          </span>
+        </div>
       </div>
     </div>
     
-    <div class="d-flex justify-content-between">
+    <div class="controls">
       <button class="btn btn-warning" @click="finishTest">Завершить</button>
-      <div class="text-danger">{{ formattedTime }} осталось</div>
+      <div class="timer">{{ formattedTime }}</div>
     </div>
     
-    <div class="found-words mt-3">
-      <h6>Найденные слова:</h6>
-      <div class="word-badge" v-for="(word, idx) in selectedWords" :key="idx">
-        {{ word }}
+    <div class="found-words">
+      <h6>Найденные слова: {{ selectedWords.length }}</h6>
+      <div class="word-badges">
+        <div class="word-badge" v-for="(word, idx) in selectedWords" :key="idx">
+          {{ word }}
+        </div>
       </div>
     </div>
   </div>
@@ -49,14 +52,14 @@ export default {
       wordIndices: [],
       textLines: [],
       touchStartPos: null,
-      isSelecting: false
+      isSelecting: false,
+      fontSize: 16 // Начальный размер шрифта
     }
   },
   computed: {
     formattedTime() {
       const minutes = Math.floor(this.timeLeft / 60);
       const seconds = this.timeLeft % 60;
-      if (this.timeLeft == 0) this.finishTest();
       return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
     }
   },
@@ -65,10 +68,47 @@ export default {
       immediate: true,
       handler(newVal) {
         this.textLines = newVal.split('\n').map(line => line.split(''));
+        this.$nextTick(this.adjustFontSize);
       }
     }
   },
+  mounted() {
+    window.addEventListener('resize', this.adjustFontSize);
+    document.addEventListener('touchmove', this.preventScroll, { passive: false });
+    this.adjustFontSize();
+  },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.adjustFontSize);
+    document.removeEventListener('touchmove', this.preventScroll);
+  },
   methods: {
+    adjustFontSize() {
+      // Автоподбор размера шрифта под экран
+      const container = this.$refs.textContainer;
+      if (!container) return;
+      
+      let fontSize = 16;
+      let fits = false;
+      
+      // Проверяем, помещается ли текст
+      const checkFit = () => {
+        container.style.fontSize = `${fontSize}px`;
+        return container.scrollWidth <= container.clientWidth;
+      };
+      
+      // Уменьшаем шрифт пока текст не поместится
+      while (fontSize > 10 && !fits) {
+        fits = checkFit();
+        if (!fits) fontSize -= 1;
+      }
+      
+      this.fontSize = fontSize;
+    },
+    preventScroll(e) {
+      if (this.isSelecting) {
+        e.preventDefault();
+      }
+    },
     getCharClass(lineIndex, charIndex) {
       const isSelected = this.currentSelection.some(
         pos => pos.line === lineIndex && pos.char === charIndex
@@ -81,32 +121,41 @@ export default {
       if (isInWord) return 'word-highlighted';
       return '';
     },
-    startSelection(lineIndex, charIndex) {
+    handleTouchStart(e) {
       this.isSelecting = true;
-      this.currentSelection = [{ line: lineIndex, char: charIndex }];
-    },
-    handleTouchStart(event, lineIndex, charIndex) {
-      event.preventDefault();
-      this.startSelection(lineIndex, charIndex);
+      const touch = e.touches[0];
       this.touchStartPos = {
-        x: event.touches[0].clientX,
-        y: event.touches[0].clientY
+        x: touch.clientX,
+        y: touch.clientY
       };
+      this.updateSelectionFromTouch(touch);
     },
-    extendSelection(lineIndex, charIndex) {
+    handleTouchMove(e) {
       if (!this.isSelecting) return;
-      
-      const start = this.currentSelection[0];
-      const end = { line: lineIndex, char: charIndex };
-      
-      if (start.line === end.line) {
-        const minChar = Math.min(start.char, end.char);
-        const maxChar = Math.max(start.char, end.char);
+      const touch = e.touches[0];
+      this.updateSelectionFromTouch(touch);
+      e.preventDefault();
+    },
+    updateSelectionFromTouch(touch) {
+      const element = document.elementFromPoint(touch.clientX, touch.clientY);
+      if (element && element.dataset.line !== undefined) {
+        const lineIndex = parseInt(element.dataset.line);
+        const charIndex = parseInt(element.dataset.char);
         
-        this.currentSelection = Array.from(
-          { length: maxChar - minChar + 1 },
-          (_, i) => ({ line: start.line, char: minChar + i })
-        );
+        if (this.currentSelection.length === 0) {
+          this.currentSelection = [{ line: lineIndex, char: charIndex }];
+        } else {
+          const start = this.currentSelection[0];
+          if (start.line === lineIndex) {
+            const minChar = Math.min(start.char, charIndex);
+            const maxChar = Math.max(start.char, charIndex);
+            
+            this.currentSelection = Array.from(
+              { length: maxChar - minChar + 1 },
+              (_, i) => ({ line: lineIndex, char: minChar + i })
+            );
+          }
+        }
       }
     },
     handleSelection() {
@@ -143,55 +192,124 @@ export default {
 </script>
 
 <style scoped>
+.test-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.text-wrapper {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 10px;
+}
+
 .letter-grid {
   font-family: monospace;
-  font-size: 18px;
   user-select: none;
   -webkit-user-select: none;
-  touch-action: manipulation;
-  overflow-x: auto;
+  touch-action: none;
+  height: 100%;
+  overflow-y: auto;
+  padding: 5px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
 }
 
 .text-line {
   white-space: pre;
   line-height: 1.8;
   word-break: keep-all;
+  display: block;
+  margin: 0;
+  font-size: v-bind('fontSize + "px"');
 }
 
 .currently-selected {
   background-color: #ffeb3b;
   color: #000;
   border-radius: 3px;
+  padding: 0 1px;
 }
 
 .word-highlighted {
   background-color: #a5d6a7;
   color: #000;
   border-radius: 3px;
+  padding: 0 1px;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.btn {
+  padding: 10px 20px;
+  min-width: 120px;
+}
+
+.timer {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #dc3545;
 }
 
 .found-words {
   border-top: 1px solid #eee;
   padding-top: 10px;
+  max-height: 20vh;
+  overflow-y: auto;
+}
+
+.word-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
 }
 
 .word-badge {
-  display: inline-block;
   background: #e0e0e0;
-  padding: 2px 8px;
-  margin: 2px;
-  border-radius: 10px;
-  font-size: 14px;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 0.9rem;
 }
 
-@media (max-width: 600px) {
-  .letter-grid {
-    font-size: 16px;
+/* Увеличиваем область касания для букв */
+.text-line span {
+  padding: 3px 1px;
+  display: inline-block;
+  min-width: 14px;
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .text-line {
     line-height: 2;
   }
   
+  .btn {
+    padding: 8px 12px;
+    min-width: 100px;
+    font-size: 0.9rem;
+  }
+  
+  .timer {
+    font-size: 1rem;
+  }
+  
   .word-badge {
-    font-size: 12px;
+    padding: 4px 8px;
+    font-size: 0.8rem;
+  }
+  
+  .text-line span {
+    min-width: 12px;
   }
 }
 </style>
