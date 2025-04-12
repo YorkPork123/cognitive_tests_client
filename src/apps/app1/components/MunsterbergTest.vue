@@ -54,7 +54,7 @@
         <div class="modal-content">
           <h3>Время вышло!</h3>
           <p>Тест завершен по истечении времени.</p>
-          <button class="btn btn-primary" @click="showResults">Результаты</button>
+          <button class="btn btn-primary" @click="finishTest">Результаты</button>
         </div>
       </div>
     </div>
@@ -74,7 +74,7 @@
       
       <div class="buttons-container">
         <button class="btn btn-primary" @click="restartTest">Попробовать снова</button>
-        <button class="btn btn-primary" @click="saveResults">Вернуться в меню</button>
+        <button class="btn btn-primary" @click="goToMenu">Вернуться в меню</button>
         <button class="btn btn-info" @click="showDetails = !showDetails">
           {{ showDetails ? 'Скрыть детали' : 'Показать детали' }}
         </button>
@@ -84,6 +84,7 @@
 </template>
 
 <script>
+import { sendTestResult } from '@/services/api';
 export default {
   name: 'MunsterbergTest',
   data() {
@@ -145,14 +146,35 @@ export default {
     },
     attentionLevel() {
       const percentage = (this.correctWordsCount / this.wordsToFind.length) * 100;
-      if (percentage < 30) return 'Очень низкий';
       if (percentage < 50) return 'Низкий';
       if (percentage < 70) return 'Средний';
-      if (percentage < 90) return 'Выше среднего';
       return 'Высокий';
     }
   },
   methods: {
+    saveTestResultToLocalStorage(testId, result) {
+      const key = `test_${testId}`;
+      localStorage.setItem(key, JSON.stringify(result));
+    },
+    async goToMenu() {
+      const testResult = {
+        id: Date.now(),
+        test: this.testId,
+        user: parseInt(localStorage.getItem('user_id')),
+        try_number: 1,
+        number_all_answers: this.wordsToFind.length,
+        number_correct_answers: this.correctWordsCount,
+        complete_time: new Date().toISOString(),
+        accuracy: this.attentionLevel,
+        missed_words: this.missedWords.join(','),
+        extra_words: this.extraWords.join(',')
+      };
+      
+      this.saveTestResultToLocalStorage(testResult.test, testResult);
+      await sendTestResult(testResult);
+      
+      this.$router.push('/menu');
+    },
     startTest() {
       this.screen = 'test';
       this.guessedWords = [];
@@ -242,8 +264,6 @@ export default {
       this.finishTest();
     },
     finishTest() {
-      if (!this.testActive) return;
-      
       this.testActive = false;
       clearInterval(this.timer);
       this.guessedWords = this.selectedWords;
@@ -253,7 +273,6 @@ export default {
       this.screen = 'start';
     },
     saveResults() {
-      // Здесь можно добавить логику сохранения результатов
       console.log('Результаты сохранены:', {
         correct: this.correctWordsCount,
         total: this.wordsToFind.length,
