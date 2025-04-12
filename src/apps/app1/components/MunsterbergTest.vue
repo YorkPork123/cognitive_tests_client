@@ -159,15 +159,13 @@ export default {
     async goToMenu() {
       const testResult = {
         id: Date.now(),
-        test: this.testId,
+        test: parseInt(localStorage.getItem('test_id')),
         user: parseInt(localStorage.getItem('user_id')),
         try_number: 1,
-        number_all_answers: this.wordsToFind.length,
-        number_correct_answers: this.correctWordsCount,
+        number_all_answers: this.wordsToFind.length.toString(),
+        number_correct_answers: this.guessedWords.length.toString(),
         complete_time: new Date().toISOString(),
         accuracy: this.attentionLevel,
-        missed_words: this.missedWords.join(','),
-        extra_words: this.extraWords.join(',')
       };
       
       this.saveTestResultToLocalStorage(testResult.test, testResult);
