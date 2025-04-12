@@ -1,13 +1,13 @@
 <template>
   <div id="app">
-    <div class="container mt-3 mt-md-5">
+    <div class="container mt-5">
       <StartScreen 
         v-if="screen === 'start'" 
         @start-test="startTest" 
       />
       <TestScreen 
         v-if="screen === 'test'" 
-        :letter-grid="formattedLetterGrid" 
+        :letter-grid="letterGrid" 
         :time-left="timeLeft" 
         @finish-test="handleTestFinish"
       />
@@ -34,8 +34,7 @@ export default {
   data() {
     return {
       screen: 'start',
-      letterGrid: [],
-      formattedLetterGrid: '',
+      letterGrid: '',
       wordsToFind: [
         'мир', 'солнце', 'луна', 'вода', 'лес', 'река', 'город', 'день',
         'ночь', 'зима', 'лето', 'осень', 'весна', 'книга', 'дом', 'кот',
@@ -44,93 +43,98 @@ export default {
       ],
       guessedWords: [],
       timeLeft: 120,
-      timer: null
+      timer: null,
+      testActive: false
     };
   },
   methods: {
     startTest() {
       this.screen = 'test';
+      this.guessedWords = [];
+      this.timeLeft = 120;
       this.generateLetterGrid();
       this.startTimer();
+      this.testActive = true;
     },
     handleTestFinish(selectedWords) {
+      if (!this.testActive) return;
+      
+      this.testActive = false;
       clearInterval(this.timer);
-      this.guessedWords = selectedWords;
+      this.guessedWords = selectedWords || [];
       this.screen = 'result';
     },
     restartTest() {
       this.screen = 'start';
-      this.guessedWords = [];
-      this.timeLeft = 120;
-      clearInterval(this.timer);
     },
     generateLetterGrid() {
-      const rows = this.isMobile() ? 30 : 40; // Меньше строк на мобильных
-      const cols = this.isMobile() ? 25 : 50; // Уже колонки на мобильных
+      const rows = 40;
+      const cols = 50;
       const gridSize = rows * cols;
       const letters = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
+      let gridArray = Array(gridSize).fill(null);
+      let placedWords = [];
 
-      // Создаем двумерный массив для сетки
-      let grid = Array.from({ length: rows }, () => 
-        Array.from({ length: cols }, () => null)
-      );
-
-      // Функция для проверки возможности размещения слова
-      const canPlaceWord = (word, row, col, isHorizontal) => {
-        if (isHorizontal) {
-          if (col + word.length > cols) return false;
-          for (let i = 0; i < word.length; i++) {
-            if (grid[row][col + i] !== null) return false;
-          }
-        } else {
-          if (row + word.length > rows) return false;
-          for (let i = 0; i < word.length; i++) {
-            if (grid[row + i][col] !== null) return false;
-          }
-        }
-        return true;
-      };
-
-      // Функция для размещения слова
-      const placeWord = (word) => {
+      // Функция для размещения слова строго горизонтально
+      const placeWordHorizontally = (word) => {
         let placed = false;
         let attempts = 0;
         const maxAttempts = 100;
-
+        
         while (!placed && attempts < maxAttempts) {
           attempts++;
-          const isHorizontal = Math.random() < 0.8;
-          const row = Math.floor(Math.random() * (isHorizontal ? rows : rows - word.length));
-          const col = Math.floor(Math.random() * (isHorizontal ? cols - word.length : cols));
-
-          if (canPlaceWord(word, row, col, isHorizontal)) {
+          
+          const row = Math.floor(Math.random() * rows);
+          const startCol = Math.floor(Math.random() * (cols - word.length));
+          const startIndex = row * cols + startCol;
+          
+          // Проверяем, можно ли разместить слово
+          let canPlace = true;
+          for (let i = 0; i < word.length; i++) {
+            if (gridArray[startIndex + i] !== null) {
+              canPlace = false;
+              break;
+            }
+          }
+          
+          if (canPlace) {
             for (let i = 0; i < word.length; i++) {
-              if (isHorizontal) {
-                grid[row][col + i] = word[i];
-              } else {
-                grid[row + i][col] = word[i];
-              }
+              gridArray[startIndex + i] = word[i];
             }
             placed = true;
+            placedWords.push(word);
           }
         }
       };
 
-      // Размещаем слова
-      this.wordsToFind.forEach(placeWord);
+      // Пытаемся разместить все слова в случайном порядке
+      const shuffledWords = [...this.wordsToFind].sort(() => Math.random() - 0.5);
+      shuffledWords.forEach(placeWordHorizontally);
+
+      // Если какие-то слова не поместились, пробуем ещё раз
+      const missedWords = this.wordsToFind.filter(word => !placedWords.includes(word));
+      if (missedWords.length > 0) {
+        missedWords.forEach(placeWordHorizontally);
+      }
 
       // Заполняем оставшиеся ячейки случайными буквами
-      for (let row = 0; row < rows; row++) {
-        for (let col = 0; col < cols; col++) {
-          if (grid[row][col] === null) {
-            grid[row][col] = letters[Math.floor(Math.random() * letters.length)];
-          }
+      for (let i = 0; i < gridArray.length; i++) {
+        if (gridArray[i] === null) {
+          gridArray[i] = letters[Math.floor(Math.random() * letters.length)];
         }
       }
 
-      // Сохраняем исходную сетку и форматированную версию
-      this.letterGrid = grid;
-      this.formattedLetterGrid = grid.map(row => row.join('')).join('\n');
+      // Форматируем в строки
+      this.letterGrid = [];
+      for (let row = 0; row < rows; row++) {
+        const start = row * cols;
+        const end = start + cols;
+        this.letterGrid.push(gridArray.slice(start, end).join(''));
+      }
+      this.letterGrid = this.letterGrid.join('\n');
+      
+      // Обновляем wordsToFind только размещенными словами
+      this.wordsToFind = placedWords;
     },
     startTimer() {
       this.timer = setInterval(() => {
@@ -139,18 +143,10 @@ export default {
           this.handleTestFinish(this.guessedWords);
         }
       }, 1000);
-    },
-    isMobile() {
-      return window.innerWidth <= 768;
     }
   },
-  watch: {
-    // Регенерируем сетку при изменении размера окна
-    screen(newVal) {
-      if (newVal === 'test') {
-        this.generateLetterGrid();
-      }
-    }
+  beforeUnmount() {
+    clearInterval(this.timer);
   }
 }
 </script>
@@ -160,17 +156,9 @@ export default {
   font-family: Arial, sans-serif;
   text-align: center;
   color: #333;
-  padding: 0 10px;
 }
 .container {
   max-width: 800px;
   margin: 0 auto;
-  padding: 0 10px;
-}
-
-@media (max-width: 768px) {
-  .container {
-    padding: 0 5px;
-  }
 }
 </style>
