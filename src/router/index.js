@@ -60,7 +60,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = localStorage.getItem('user_id') || true;  // Проверка аутентификации
+  const isAuthenticated = localStorage.getItem('user_id');  // Проверка аутентификации
   if (to.meta.requiresAuth && !isAuthenticated) {
     next('/login');  // Перенаправление на страницу входа
   } else {
