@@ -103,10 +103,7 @@ export default {
       };
       
       this.saveTestResultToLocalStorage(testResult.test, testResult);
-      
-      if (this.isExamMode) {
-        await sendTestResult(testResult);
-      }
+      await sendTestResult(testResult);
       
       this.$router.push('/menu');
     }
