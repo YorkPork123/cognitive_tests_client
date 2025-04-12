@@ -33,7 +33,7 @@ export default {
   methods: {
     async submitForm() {
       try {
-        const response = await axios.post('http://localhost:8000/api/login/', this.userData);
+        const response = await axios.post('https://yorkpork123.pythonanywhere.com/api/login/', this.userData);
         alert('Вход выполнен успешно!');
         localStorage.setItem('user_id', response.data.user_id)
         this.$router.push('/');  // Перенаправление на главную страницу
