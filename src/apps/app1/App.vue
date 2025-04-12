@@ -64,35 +64,70 @@ export default {
       clearInterval(this.timer);
     },
     generateLetterGrid() {
-      const gridSize = 1000;
+      const gridSize = 2000;
       const rowLength = 50;
       const letters = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
 
       let gridArray = Array(gridSize).fill(null);
 
-      const placeWordHorizontally = (word) => {
+      const placeWord = (word) => {
         let placed = false;
-        while (!placed) {
-          const rowStartIndex = Math.floor(Math.random() * (gridSize / rowLength)) * rowLength;
-          const startIndex = rowStartIndex + Math.floor(Math.random() * (rowLength - word.length));
-          const canPlace = gridArray
-            .slice(startIndex, startIndex + word.length)
-            .every(char => char === null);
-
-          if (canPlace) {
-            for (let i = 0; i < word.length; i++) {
-              gridArray[startIndex + i] = word[i];
+        let attempts = 0;
+        const maxAttempts = 100;
+        
+        while (!placed && attempts < maxAttempts) {
+          attempts++;
+          
+          const isHorizontal = Math.random() < 0.8;
+          
+          if (isHorizontal) {
+            const rowStartIndex = Math.floor(Math.random() * (gridSize / rowLength)) * rowLength;
+            const startIndex = rowStartIndex + Math.floor(Math.random() * (rowLength - word.length));
+            
+            if (startIndex + word.length <= rowStartIndex + rowLength) {
+              const canPlace = gridArray
+                .slice(startIndex, startIndex + word.length)
+                .every(char => char === null);
+                
+              if (canPlace) {
+                for (let i = 0; i < word.length; i++) {
+                  gridArray[startIndex + i] = word[i];
+                }
+                placed = true;
+              }
             }
-            placed = true;
+          } else {
+            const startCol = Math.floor(Math.random() * rowLength);
+            const startRow = Math.floor(Math.random() * ((gridSize / rowLength) - word.length));
+            const startIndex = startRow * rowLength + startCol;
+            
+            let canPlace = true;
+            for (let i = 0; i < word.length; i++) {
+              const index = startIndex + i * rowLength;
+              if (index >= gridSize || gridArray[index] !== null) {
+                canPlace = false;
+                break;
+              }
+            }
+            
+            if (canPlace) {
+              for (let i = 0; i < word.length; i++) {
+                const index = startIndex + i * rowLength;
+                gridArray[index] = word[i];
+              }
+              placed = true;
+            }
           }
         }
       };
 
-      this.wordsToFind.forEach(placeWordHorizontally);
+      this.wordsToFind.forEach(placeWord);
 
-      gridArray = gridArray.map(char => 
-        char === null ? letters[Math.floor(Math.random() * letters.length)] : char
-      );
+      for (let i = 0; i < gridArray.length; i++) {
+        if (gridArray[i] === null) {
+          gridArray[i] = letters[Math.floor(Math.random() * letters.length)];
+        }
+      }
 
       this.letterGrid = gridArray
         .join('')
