@@ -125,3 +125,86 @@ export default {
         this.currentSelection = [];
         return;
       }
+            // Сортируем выделение (только для одной строки)
+      const sortedSelection = [...this.currentSelection].sort((a, b) => {
+        if (a.line !== b.line) return a.line - b.line;
+        return a.char - b.char;
+      });
+
+      // Проверяем, что все символы в одной строке
+      const firstLine = sortedSelection[0].line;
+      const allSameLine = sortedSelection.every(pos => pos.line === firstLine);
+
+      if (!allSameLine) {
+        this.currentSelection = [];
+        return;
+      }
+
+      const word = sortedSelection
+        .map(pos => this.textLines[pos.line][pos.char])
+        .join('');
+
+      if (word.length >= 2) {
+        this.selectedWords.push(word);
+        this.wordIndices.push(sortedSelection);
+      }
+
+      this.currentSelection = [];
+    },
+    finishTest() {
+      this.$emit('finish-test', this.selectedWords);
+    }
+  }
+}
+</script>
+
+<style scoped>
+.letter-grid {
+  font-family: monospace;
+  font-size: 18px;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.text-line {
+  white-space: pre;
+  line-height: 1.8;
+}
+
+.currently-selected {
+  background-color: #ffeb3b;
+  color: #000;
+  border-radius: 2px;
+}
+
+.word-highlighted {
+  background-color: #a5d6a7;
+  color: #000;
+  border-radius: 2px;
+}
+
+.found-words {
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+}
+
+.word-badge {
+  display: inline-block;
+  background: #e0e0e0;
+  padding: 2px 8px;
+  margin: 2px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+@media (max-width: 600px) {
+  .letter-grid {
+    font-size: 16px;
+    line-height: 2;
+  }
+
+  .word-badge {
+    font-size: 12px;
+  }
+}
+</style>
