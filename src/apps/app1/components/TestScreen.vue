@@ -56,6 +56,9 @@ export default {
     formattedTime() {
       const minutes = Math.floor(this.timeLeft / 60);
       const seconds = this.timeLeft % 60;
+      if this.timeLeft == 0 {
+        this.finishTEst();
+      }
       return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
     }
   },
