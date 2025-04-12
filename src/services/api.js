@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8000';  // Указываем URL нашего Django-сервера
+const API_BASE_URL = 'https://yorkpork123.pythonanywhere.com';  // Указываем URL нашего Django-сервера
 
 const api = axios.create({
     baseURL: API_BASE_URL,
