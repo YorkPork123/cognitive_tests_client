@@ -5,13 +5,16 @@
       class="bg-light p-3 mb-3 text-monospace letter-grid"
       ref="textContainer"
       @mouseup="handleSelection"
+      @touchend="handleTouchEnd"
     >
       <span
         v-for="(char, index) in processedText"
         :key="index"
-        :class="{ 'highlighted': highlightedIndices.includes(index) }"
+        :class="getCharClass(index)"
         @mousedown="startSelection(index)"
+        @touchstart="handleTouchStart($event, index)"
         @mouseenter="extendSelection(index)"
+        @touchmove="handleTouchMove"
       >
         {{ char }}
       </span>
@@ -19,7 +22,14 @@
     
     <div class="d-flex justify-content-between">
       <button class="btn btn-warning" @click="finishTest">Завершить</button>
-      <div class="text-danger">{{ timeLeft }} секунд осталось</div>
+      <div class="text-danger">{{ formattedTime }} осталось</div>
+    </div>
+    
+    <div class="found-words mt-3">
+      <h6>Найденные слова:</h6>
+      <div class="word-badge" v-for="(word, idx) in selectedWords" :key="idx">
+        {{ word }}
+      </div>
     </div>
   </div>
 </template>
@@ -30,73 +40,79 @@ export default {
   props: ['letterGrid', 'timeLeft'],
   data() {
     return {
-      highlightedIndices: [],
-      selectionStart: null,
-      isSelecting: false,
-      selectedWords: []
+      currentSelection: [],
+      selectedWords: [],
+      wordIndices: [],
+      touchStartIndex: null,
+      isTouchSelecting: false
     }
   },
   computed: {
     processedText() {
-      return this.letterGrid.split('');
+      return this.letterGrid.replace(/\n/g, '').split('');
+    },
+    formattedTime() {
+      const minutes = Math.floor(this.timeLeft / 60);
+      const seconds = this.timeLeft % 60;
+      return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
     }
   },
   methods: {
+    getCharClass(index) {
+      if (this.currentSelection.includes(index)) return 'currently-selected';
+      const isInWord = this.wordIndices.some(indices => indices.includes(index));
+      return isInWord ? 'word-highlighted' : '';
+    },
     startSelection(index) {
-      this.isSelecting = true;
-      this.selectionStart = index;
-      if (!event.ctrlKey) {
-        this.highlightedIndices = [];
+      this.currentSelection = [index];
+    },
+    handleTouchStart(event, index) {
+      this.touchStartIndex = index;
+      this.isTouchSelecting = true;
+      this.currentSelection = [index];
+      event.preventDefault();
+    },
+    handleTouchMove(event) {
+      if (!this.isTouchSelecting) return;
+      
+      const touch = event.touches[0];
+      const element = document.elementFromPoint(touch.clientX, touch.clientY);
+      if (element && element.getAttribute('key')) {
+        const index = parseInt(element.getAttribute('key'));
+        this.extendSelection(index);
       }
-      this.toggleHighlight(index);
+    },
+    handleTouchEnd() {
+      this.handleSelection();
+      this.isTouchSelecting = false;
     },
     extendSelection(index) {
-      if (!this.isSelecting) return;
+      if (this.currentSelection.length === 0) return;
       
-      const start = Math.min(this.selectionStart, index);
-      const end = Math.max(this.selectionStart, index);
+      const start = this.currentSelection[0];
+      const end = index;
+      const min = Math.min(start, end);
+      const max = Math.max(start, end);
       
-      this.highlightedIndices = [
-        ...this.highlightedIndices.filter(i => i < start || i > end),
-        ...Array.from({ length: end - start + 1 }, (_, i) => start + i)
-      ];
+      this.currentSelection = Array.from({length: max - min + 1}, (_, i) => min + i);
     },
     handleSelection() {
-      this.isSelecting = false;
-      this.extractSelectedWords();
-    },
-    toggleHighlight(index) {
-      const position = this.highlightedIndices.indexOf(index);
-      if (position === -1) {
-        this.highlightedIndices.push(index);
-      } else {
-        this.highlightedIndices.splice(position, 1);
+      if (this.currentSelection.length < 2) {
+        this.currentSelection = [];
+        return;
       }
-    },
-    extractSelectedWords() {
-      if (this.highlightedIndices.length === 0) return;
       
-      const sortedIndices = [...this.highlightedIndices].sort((a, b) => a - b);
-      let words = [];
-      let currentWord = '';
-      let prevIndex = sortedIndices[0] - 1;
+      const sortedIndices = [...this.currentSelection].sort((a, b) => a - b);
+      const word = sortedIndices.map(i => this.processedText[i]).join('');
       
-      sortedIndices.forEach(index => {
-        const char = this.letterGrid[index];
-        if (index === prevIndex + 1) {
-          currentWord += char;
-        } else {
-          if (currentWord) words.push(currentWord);
-          currentWord = char;
-        }
-        prevIndex = index;
-      });
+      if (word.length >= 2) {
+        this.selectedWords.push(word);
+        this.wordIndices.push(sortedIndices);
+      }
       
-      if (currentWord) words.push(currentWord);
-      this.selectedWords = words.filter(word => word.length > 1);
+      this.currentSelection = [];
     },
     finishTest() {
-      this.extractSelectedWords();
       this.$emit('finish-test', this.selectedWords);
     }
   }
@@ -105,32 +121,48 @@ export default {
 
 <style scoped>
 .letter-grid {
-  line-height: 1.5;
+  line-height: 1.8;
   white-space: pre-wrap;
-  user-select: none;
   font-family: monospace;
+  font-size: 18px;
+  user-select: none;
+  touch-action: manipulation;
 }
 
-.highlighted {
+.currently-selected {
   background-color: #ffeb3b;
   color: #000;
   border-radius: 2px;
-  padding: 0 1px;
+}
+
+.word-highlighted {
+  background-color: #a5d6a7;
+  color: #000;
+  border-radius: 2px;
+}
+
+.found-words {
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+}
+
+.word-badge {
+  display: inline-block;
+  background: #e0e0e0;
+  padding: 2px 8px;
+  margin: 2px;
+  border-radius: 10px;
+  font-size: 14px;
 }
 
 @media (max-width: 600px) {
   .letter-grid {
-    font-size: 11px; 
+    font-size: 16px;
+    line-height: 2;
   }
-  h5 {
-    font-size: 14px; 
-  }
-  .btn {
-    font-size: 10px; 
-    padding: 0.25rem 0.5rem; 
-  }
-  .text-danger {
-    font-size: 12px; 
+  
+  .word-badge {
+    font-size: 12px;
   }
 }
 </style>
